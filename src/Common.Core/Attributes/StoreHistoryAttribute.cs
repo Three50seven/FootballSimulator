@@ -11,7 +11,7 @@
         //
         // Summary:
         //     Whether or not individual property changes should be tracked per entity change.
-        //     Works with NetTango.Core.Annotations.TrackChangesAttribute properties. Defaults
+        //     Works with Common.Core.Annotations.TrackChangesAttribute properties. Defaults
         //     to false.
         public bool IncludePropChanges { get; set; }
 
@@ -24,7 +24,7 @@
 
         //
         // Summary:
-        //     Class level attribute for NetTango.Core.Domain.DomainEntity classes to store
+        //     Class level attribute for Common.Core.Domain.DomainEntity classes to store
         //     historical changes on its objects.
         //
         // Parameters:
@@ -33,7 +33,7 @@
         //
         //   includePropChanges:
         //     Whether or not individual property changes should be tracked per entity change.
-        //     Works with NetTango.Core.Annotations.TrackChangesAttribute properties. Defaults
+        //     Works with Common.Core.Annotations.TrackChangesAttribute properties. Defaults
         //     to false.
         //
         //   recordAllEvents:

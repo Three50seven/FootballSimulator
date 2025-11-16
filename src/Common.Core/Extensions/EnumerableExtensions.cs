@@ -293,7 +293,7 @@ namespace Common.Core
 
         //
         // Summary:
-        //     Add any unique items to the existing list. Calls into NetTango.Core.EnumerableExtensions.AddUnique``1(System.Collections.Generic.ICollection{``0},``0,System.Func{``0,System.Boolean}).
+        //     Add any unique items to the existing list. Calls into Common.Core.EnumerableExtensions.AddUnique``1(System.Collections.Generic.ICollection{``0},``0,System.Func{``0,System.Boolean}).
         //
         //
         // Parameters:

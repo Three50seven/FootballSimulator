@@ -4,7 +4,7 @@
     //
     // Summary:
     //     When application is set to track change and when the class for the property is
-    //     decorated with NetTango.Core.StoreHistoryAttribute, the changes to this property
+    //     decorated with Common.Core.StoreHistoryAttribute, the changes to this property
     //     will be tracked.
     [AttributeUsage(AttributeTargets.Property)]
     public class TrackChangesAttribute : Attribute

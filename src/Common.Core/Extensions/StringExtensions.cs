@@ -111,7 +111,7 @@ namespace Common.Core
 
         //
         // Summary:
-        //     Remove special characters defined under NetTango.Core.RegularExpressions.SpecialCharacters
+        //     Remove special characters defined under Common.Core.RegularExpressions.SpecialCharacters
         //     from a given string input.
         //
         // Parameters:
@@ -173,7 +173,7 @@ namespace Common.Core
         //
         // Summary:
         //     Format a string to singular or plural based on count/int value supplied for num.
-        //     If num equals 1, the string value is returned unchanged. Else, NetTango.Core.StringExtensions.ToPlural(System.String)
+        //     If num equals 1, the string value is returned unchanged. Else, Common.Core.StringExtensions.ToPlural(System.String)
         //     is returned. Optionally supplied the plural suffix/ending for the plural condition
         //     using pluralEnding.
         //
@@ -391,7 +391,7 @@ namespace Common.Core
 
         //
         // Summary:
-        //     Replaces any System.Environment.NewLine and NetTango.Core.StringExtensions.EncodedNewLine
+        //     Replaces any System.Environment.NewLine and Common.Core.StringExtensions.EncodedNewLine
         //     found in input string with propery HTML tags (p and br)
         //
         // Parameters:

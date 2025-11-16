@@ -25,7 +25,7 @@ namespace Common.Core.Domain
 
         //
         // Summary:
-        //     Pull NetTango.Core.LocalizedDescriptionAttribute.Description from localized resource.
+        //     Pull Common.Core.LocalizedDescriptionAttribute.Description from localized resource.
         //
         //
         // Parameters:

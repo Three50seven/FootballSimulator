@@ -13,7 +13,7 @@ namespace Common.Core
 
         //
         // Summary:
-        //     Cache the Enum friendly name lookup values when using NetTango.Core.EnumExtensions.AsFriendlyName(System.Enum,System.String)
+        //     Cache the Enum friendly name lookup values when using Common.Core.EnumExtensions.AsFriendlyName(System.Enum,System.String)
         //     from the executing assembly. Optionally provide a filter against all assemblies
         //     that will be in the current domain. Only call this function once - each call
         //     will reset the cache.

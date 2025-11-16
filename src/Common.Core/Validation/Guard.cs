@@ -226,7 +226,7 @@ namespace Common.Core.Validation
         //
         // Summary:
         //     Throws System.ArgumentNullException if date does not contain a valid value. Operator
-        //     NetTango.Core.NullableExtensions.HasValue(System.DateTime) is used to evaluate.
+        //     Common.Core.NullableExtensions.HasValue(System.DateTime) is used to evaluate.
         //
         //
         // Parameters:
@@ -310,7 +310,7 @@ namespace Common.Core.Validation
         //
         // Summary:
         //     Throws System.InvalidOperationException if entity object item is considered new
-        //     under NetTango.Core.Domain.IEntity`1.IsNew.
+        //     under Common.Core.Domain.IEntity`1.IsNew.
         //
         // Parameters:
         //   item:
@@ -339,7 +339,7 @@ namespace Common.Core.Validation
         //
         // Summary:
         //     Throws System.InvalidOperationException if entity object item is considered new
-        //     under NetTango.Core.Domain.IEntity`1.IsNew.
+        //     under Common.Core.Domain.IEntity`1.IsNew.
         //
         // Parameters:
         //   item:
@@ -362,7 +362,7 @@ namespace Common.Core.Validation
         //
         // Summary:
         //     Throws System.InvalidOperationException if entity object item is not considered
-        //     new under NetTango.Core.Domain.IEntity`1.IsNew.
+        //     new under Common.Core.Domain.IEntity`1.IsNew.
         //
         // Parameters:
         //   item:
@@ -391,7 +391,7 @@ namespace Common.Core.Validation
         //
         // Summary:
         //     Throws System.InvalidOperationException if entity object item is not considered
-        //     new under NetTango.Core.Domain.IEntity`1.IsNew.
+        //     new under Common.Core.Domain.IEntity`1.IsNew.
         //
         // Parameters:
         //   item:
@@ -414,7 +414,7 @@ namespace Common.Core.Validation
         //
         // Summary:
         //     Throws System.InvalidOperationException if list of items is empty or null. Calls
-        //     NetTango.Core.EnumerableExtensions.HasItems``1(System.Collections.Generic.IEnumerable{``0})
+        //     Common.Core.EnumerableExtensions.HasItems``1(System.Collections.Generic.IEnumerable{``0})
         //     to evaluate.
         //
         // Parameters:
