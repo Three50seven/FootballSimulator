@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="User\Edit\" />
+    <Folder Include="User\Manage\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FootballSimulator.Core\FootballSimulator.Core.csproj" />
+  </ItemGroup>
+
+</Project>

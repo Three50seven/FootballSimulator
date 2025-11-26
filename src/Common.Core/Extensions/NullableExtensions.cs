@@ -1,40 +1,37 @@
-﻿namespace Common.Core
+﻿using System;
+
+namespace Common.Core
 {
     public static class NullableExtensions
     {
-        //
-        // Summary:
-        //     Returns true if guid value is not null or Empty.
-        //
-        // Parameters:
-        //   guid:
+        /// <summary>
+        /// Returns true if guid value is not null or Empty.
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
         public static bool HasValue(this Guid? guid)
         {
-            return guid.HasValue && guid != Guid.Empty;
+            return guid != null && guid != Guid.Empty;
         }
 
-        //
-        // Summary:
-        //     Returns true if date value is not null and not min or max date value.
-        //
-        // Parameters:
-        //   date:
+        /// <summary>
+        /// Returns true if date value is not null and not min or max date value.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public static bool HasValue(this DateTime? date)
         {
-            if (!date.HasValue)
-            {
+            if (date == null)
                 return false;
-            }
-
-            return date.Value.HasValue();
+            else
+                return ((DateTime)date).HasValue();
         }
 
-        //
-        // Summary:
-        //     Returns true if date value is not min or max date value.
-        //
-        // Parameters:
-        //   date:
+        /// <summary>
+        /// Returns true if date value is not min or max date value.
+        /// </summary>
+        /// <param name="date"></param>
+        /// <returns></returns>
         public static bool HasValue(this DateTime date)
         {
             return date != DateTime.MinValue && date != DateTime.MaxValue;

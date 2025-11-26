@@ -1,196 +1,162 @@
 ﻿using Common.Core.Domain;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Common.Core
 {
     public static class NumericExtensions
     {
-        //
-        // Summary:
-        //     Formats decimal in readable format.
-        //
-        // Parameters:
-        //   value:
-        //
-        //   includeDecimalPlaces:
+        /// <summary>
+        /// Formats decimal in readable format.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="includeDecimalPlaces"></param>
+        /// <returns></returns>
         public static string Format(this decimal? value, bool includeDecimalPlaces = false)
         {
-            if (!value.HasValue)
-            {
+            if (value == null)
                 return "0";
-            }
 
-            return value.Value.Format(includeDecimalPlaces);
+            return ((decimal)value).Format(includeDecimalPlaces);
         }
 
-        //
-        // Summary:
-        //     Formats decimal in readable format.
-        //
-        // Parameters:
-        //   value:
-        //
-        //   includeDecimalPlaces:
+        /// <summary>
+        /// Formats decimal in readable format.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="includeDecimalPlaces"></param>
+        /// <returns></returns>
         public static string Format(this decimal value, bool includeDecimalPlaces = false)
         {
-            string text = $"{value:0.00}";
-            if (text.EndsWith("00") && !includeDecimalPlaces)
-            {
+            var s = string.Format("{0:0.00}", value);
+            if (s.EndsWith("00") && !includeDecimalPlaces)
                 return ((int)value).ToString();
-            }
-
-            return text;
+            else
+                return s;
         }
 
-        //
-        // Summary:
-        //     Converts a 0 to null. Also converts negative numbers by default to null.
-        //
-        // Parameters:
-        //   value:
-        //
-        //   positiveOnly:
+        /// <summary>
+        /// Converts a 0 to null. Also converts negative numbers by default to null.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="positiveOnly"></param>
+        /// <returns></returns>
         public static int? CleanForNull(this int? value, bool positiveOnly = true)
         {
-            if (!value.HasValue || value == 0 || (value < 0 && positiveOnly))
-            {
+            if (value == null || value == 0 || (value < 0 && positiveOnly))
                 return null;
-            }
-
-            return value;
+            else
+                return value;
         }
 
-        //
-        // Summary:
-        //     Converts a 0 to null. Also converts negative numbers by default to null.
-        //
-        // Parameters:
-        //   value:
-        //
-        //   positiveOnly:
+        /// <summary>
+        /// Converts a 0 to null. Also converts negative numbers by default to null.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="positiveOnly"></param>
+        /// <returns></returns>
         public static decimal? CleanForNull(this decimal? value, bool positiveOnly = true)
         {
-            if (value.HasValue)
-            {
-                decimal? num = value;
-                if (!((num.GetValueOrDefault() == default(decimal)) & num.HasValue))
-                {
-                    num = value;
-                    if (!(((num.GetValueOrDefault() < default(decimal)) & num.HasValue) && positiveOnly))
-                    {
-                        return value;
-                    }
-                }
-            }
-
-            return null;
+            if (value == null || value == 0 || (value < 0 && positiveOnly))
+                return null;
+            else
+                return value;
         }
 
-        //
-        // Summary:
-        //     Converts a 0 to null. Also converts negative numbers by default to null.
-        //
-        // Parameters:
-        //   value:
-        //
-        //   positiveOnly:
+        /// <summary>
+        /// Converts a 0 to null. Also converts negative numbers by default to null.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="positiveOnly"></param>
+        /// <returns></returns>
         public static double? CleanForNull(this double? value, bool positiveOnly = true)
         {
-            if (!value.HasValue || value == 0.0 || (value < 0.0 && positiveOnly))
-            {
+            if (value == null || value == 0 || (value < 0 && positiveOnly))
                 return null;
-            }
-
-            return value;
+            else
+                return value;
         }
 
-        //
-        // Summary:
-        //     Converts a 0 to null. Also converts negative numbers by default to null.
-        //
-        // Parameters:
-        //   value:
-        //
-        //   positiveOnly:
+        /// <summary>
+        /// Converts a 0 to null. Also converts negative numbers by default to null.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="positiveOnly"></param>
+        /// <returns></returns>
         public static long? CleanForNull(this long? value, bool positiveOnly = true)
         {
-            if (!value.HasValue || value == 0 || (value < 0 && positiveOnly))
-            {
+            if (value == null || value == 0 || (value < 0 && positiveOnly))
                 return null;
-            }
-
-            return value;
+            else
+                return value;
         }
 
-        //
-        // Summary:
-        //     Returns the proper suffix value. Returns "th", "st", "nd", or "rd"
-        //
-        // Parameters:
-        //   integer:
+        /// <summary>
+        /// Returns the proper suffix value. Returns "th", "st", "nd", or "rd"
+        /// </summary>
+        /// <param name="integer"></param>
+        /// <returns></returns>
         public static string ToOccurrenceSuffix(this int integer)
         {
-            int num = integer % 100;
-            int num2 = num;
-            if ((uint)(num2 - 11) <= 2u)
+            switch (integer % 100)
             {
-                return "th";
+                case 11:
+                case 12:
+                case 13:
+                    return "th";
             }
-
-            return (integer % 10) switch
+            switch (integer % 10)
             {
-                1 => "st",
-                2 => "nd",
-                3 => "rd",
-                _ => "th",
-            };
+                case 1:
+                    return "st";
+                case 2:
+                    return "nd";
+                case 3:
+                    return "rd";
+                default:
+                    return "th";
+            }
         }
 
-        //
-        // Summary:
-        //     Convert integer list to SelectItem list with Id values set to int values.
-        //
-        // Parameters:
-        //   list:
+        /// <summary>
+        /// Convert integer list to SelectItem list with Id values set to int values.
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
         public static IEnumerable<SelectItem> ToSelectList(this IEnumerable<int> list)
         {
-            return (list ?? Enumerable.Empty<int>()).Select(x => new SelectItem(x));
+            return list?.Select(x => new SelectItem(x));
         }
 
-        //
-        // Summary:
-        //     Get list of all pair combinations from list of ints Ref - http://stackoverflow.com/a/7242116
-        //
-        //
-        // Parameters:
-        //   list:
-        public static IEnumerable<Tuple<int, int>>? ToPairsList(this IEnumerable<int> list)
+        /// <summary>
+        /// Get list of all pair combinations from list of ints
+        /// Ref - http://stackoverflow.com/a/7242116
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static IEnumerable<Tuple<int, int>> ToPairsList(this IEnumerable<int> list)
         {
             if (list == null)
-            {
                 return null;
-            }
 
-            return from item1 in list
-                   from item2 in list
-                   where item1 < item2
-                   select Tuple.Create(item1, item2);
+            return (from item1 in list
+                    from item2 in list
+                    where item1 < item2
+                    select Tuple.Create(item1, item2));
         }
 
-        //
-        // Summary:
-        //     Perform divide operation.
-        //
-        // Parameters:
-        //   value:
-        //
-        //   divideBy:
-        //
-        //   roundUp:
+        /// <summary>
+        /// Perform divide operation.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="divideBy"></param>
+        /// <param name="roundUp"></param>
+        /// <returns></returns>
         public static int DivideBy(this int value, int divideBy, bool roundUp = true)
         {
-            int result;
-            int num = Math.DivRem(value, divideBy, out result);
-            return (result == 0 || !roundUp) ? num : (num + 1);
+            int quotient = Math.DivRem(value, divideBy, out int remainder);
+            return remainder == 0 || !roundUp ? quotient : quotient + 1;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Common.Core;
+using Common.Core.Annotations;
 using Common.Core.Domain;
 
 namespace FootballSimulator.Core.Domain

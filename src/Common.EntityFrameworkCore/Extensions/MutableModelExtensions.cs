@@ -16,9 +16,7 @@ namespace Common.EntityFrameworkCore
         public static IEnumerable<IMutableEntityType> GetTableEntityTypes(this IMutableModel model)
         {
             Guard.IsNotNull(model, nameof(model));
-            return from et in model.GetEntityTypes()
-                   where typeof(IEntity).IsAssignableFrom(et.ClrType)
-                   select et;
+            return model.GetEntityTypes().Where(et => typeof(IEntity).IsAssignableFrom(et.ClrType));
         }
     }
 }

@@ -15,7 +15,7 @@ BEGIN
 	SET IDENTITY_INSERT dbo.users ON;
 
 	INSERT INTO USERS (id, [user_name], email, first_name, last_name, [guid])
-	SELECT 1, 'admin', 'admin@acme.com', 'System', 'Administrator', '62939B8A-24B8-4618-BF52-9B7A3985060F'
+	SELECT 1, 'admin', 'admin@footballsimulator.com', 'System', 'Administrator', '62939B8A-24B8-4618-BF52-9B7A3985060F'
 
 	SET IDENTITY_INSERT dbo.users OFF
 END

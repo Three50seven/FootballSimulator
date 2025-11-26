@@ -1,4 +1,6 @@
-﻿namespace FootballSimulator.Core
+﻿using System.ComponentModel;
+
+namespace FootballSimulator.Core
 {
     public enum EntityTypeOption
     {
@@ -7,6 +9,16 @@
     }
     public enum RoleOption
     {
-        Admin = 1
+        Admin = 1,
+        [Description("General User")]
+        GeneralUser = 2
+    }
+    public enum HostEnvironmentOption
+    {
+        Local = 1,
+        Development = 2,
+        Staging = 3,
+        Test = 4,
+        Production = 5
     }
 }

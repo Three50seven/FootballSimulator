@@ -2,17 +2,16 @@
 {
     public class PropertyValidationRule : ValidationRule
     {
-        public string Name { get; private set; }
-
-        public PropertyValidationRule(string name, string description)
-            : base(description)
+        public PropertyValidationRule(string name, string description) : base(description)
         {
             Name = name;
         }
 
+        public string Name { get; private set; }
+
         public override string ToString()
         {
-            return $"Name: {Name}. Description: {base.Description}.";
+            return $"Name: {Name}. Description: {Description}.";
         }
     }
 }

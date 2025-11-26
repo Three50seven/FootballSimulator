@@ -1,130 +1,123 @@
 ﻿using Common.Core.Domain;
 using Common.Core.Validation;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Common.Core
 {
     public static class AssemblyExtensions
     {
-        //
-        // Summary:
-        //     Get all interface + class type matches in an assembly. Returns match set for
-        //     exportable, non-abstract class implementations that have one top level interface.
-        //
-        //
-        // Parameters:
-        //   assembly:
-        //
-        //   includeAbstractBaseInterface:
-        //     Include interfaces on first-level abstract base class if present. Defaults to
-        //     true.
-        //
-        //   query:
-        //     Optional filtering query to distinguish types found in the Assembly assembly.
-        public static IEnumerable<TypeRegistrationMatch> GetTypeMatches(this Assembly assembly, bool includeAbstractBaseInterface = true, Func<Type, bool>? query = null)
+        /// <summary>
+        /// Get all interface + class type matches in an assembly.
+        /// Returns match set for exportable, non-abstract class implementations that have one top level interface.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="includeAbstractBaseInterface">Include interfaces on first-level abstract base class if present. Defaults to true.</param>
+        /// <param name="query">Optional filtering query to distinguish types found in the Assembly <paramref name="assembly"/>.</param>
+        /// <returns></returns>
+        public static IEnumerable<TypeRegistrationMatch> GetTypeMatches(
+            this Assembly assembly, 
+            bool includeAbstractBaseInterface = true, 
+            Func<Type, bool> query = null)
         {
-            Guard.IsNotNull(assembly, "assembly");
-            var source = from type in assembly.GetExportedTypes()
-                         where type.IsClass && !type.IsAbstract
-                         select new
-                         {
-                             Type = type,
-                             Interfaces = type.GetTopLevelInterfaces(includeAbstractBaseInterface)
-                         };
-            source = source.Where(r => r.Interfaces.Count() == 1);
-            if (query != null)
-            {
-                source = source.Where(r => query(r.Type));
-            }
+            Guard.IsNotNull(assembly, nameof(assembly));
 
-            return source.Select(r => new TypeRegistrationMatch(r.Interfaces.Single(), r.Type));
+            // exportable types with associated interfaces
+            var registrations =
+                from type in assembly.GetExportedTypes()
+                where type.IsClass && !type.IsAbstract
+                select new
+                {
+                    Type = type,
+                    Interfaces = type.GetTopLevelInterfaces(includeAbstractBaseInterface)
+                };
+
+            // only registrations that have a single top level interface
+            registrations = registrations.Where(r => r.Interfaces.Count() == 1);
+
+            if (query != null)
+                registrations = registrations.Where(r => query.Invoke(r.Type));
+
+            return registrations.Select(r => new TypeRegistrationMatch(r.Interfaces.Single(), r.Type));
         }
 
-        //
-        // Summary:
-        //     Get all interface + class type matches in an assembly that implement a generic
-        //     type definition genericTypeInterface.
-        //
-        // Parameters:
-        //   assembly:
-        //
-        //   genericTypeInterface:
-        //     Generic type definition.
+        /// <summary>
+        /// Get all interface + class type matches in an assembly that implement a generic type definition <paramref name="genericTypeInterface"/>.
+        /// </summary>
+        /// <param name="assembly"></param>
+        /// <param name="genericTypeInterface">Generic type definition.</param>
+        /// <returns></returns>
         public static IEnumerable<TypeRegistrationMatch> GetGenericTypeMatches(this Assembly assembly, Type genericTypeInterface)
         {
-            Guard.IsNotNull(assembly, "assembly");
-            Guard.IsNotNull(genericTypeInterface, "genericTypeInterface");
-            return from type in assembly.GetExportedTypes()
-                   let typeInterface = (from i in type.GetInterfaces()
-                                        where i.IsGenericType && i.GetGenericTypeDefinition() == genericTypeInterface
-                                        select i).FirstOrDefault()
-                   where !type.IsAbstract && typeInterface != null
-                   select new TypeRegistrationMatch(typeInterface, type);
+            Guard.IsNotNull(assembly, nameof(assembly));
+            Guard.IsNotNull(genericTypeInterface, nameof(genericTypeInterface));
+
+            return (from type in assembly.GetExportedTypes()
+                    let typeInterface = (from i in type.GetInterfaces()
+                                               where i.IsGenericType
+                                                  && i.GetGenericTypeDefinition() == genericTypeInterface
+                                               select i).FirstOrDefault()
+                    where !type.IsAbstract
+                        && typeInterface != null
+                    select new TypeRegistrationMatch(typeInterface, type));
         }
 
-        public static Type? GetInheritingTypeFirstOrDefault(this Assembly assembly, Type baseType)
+        public static Type GetInheritingTypeFirstOrDefault(this Assembly assembly, Type baseType)
         {
-            Guard.IsNotNull(assembly, "assembly");
-            Guard.IsNotNull(baseType, "baseType");
-            return (from t in assembly.GetExportedTypes()
-                    where !t.IsAbstract && t.IsSubclassOf(baseType)
-                    select t).FirstOrDefault();
+            Guard.IsNotNull(assembly, nameof(assembly));
+            Guard.IsNotNull(baseType, nameof(baseType));
+
+            return assembly.GetExportedTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(baseType)).FirstOrDefault();
         }
 
         public static Type GetRequiredInheritingType(this Assembly assembly, Type interfaceType, Type baseType)
         {
-            Guard.IsNotNull(assembly, "assembly");
-            Guard.IsNotNull(interfaceType, "interfaceType");
-            Guard.IsNotNull(baseType, "baseType");
-            Type? inheritingTypeFirstOrDefault = assembly.GetInheritingTypeFirstOrDefault(baseType) ?? 
-                throw new InvalidOperationException($"No implementation found for {interfaceType.FullName}. \r\nCreate implementation that inherits from {baseType.FullName} in assembly {assembly.FullName}.");
-            return inheritingTypeFirstOrDefault;
+            Guard.IsNotNull(assembly, nameof(assembly));
+            Guard.IsNotNull(interfaceType, nameof(interfaceType));
+            Guard.IsNotNull(baseType, nameof(baseType));
+
+            var inheritingType = GetInheritingTypeFirstOrDefault(assembly, baseType);
+            if (inheritingType == null)
+                throw new InvalidOperationException($@"No implementation found for {interfaceType.FullName}. 
+Create implementation that inherits from {baseType.FullName} in assembly {assembly.FullName}.");
+
+            return inheritingType;
         }
 
-        //
-        // Summary:
-        //     Filter list of assemblies, assumed to be generated by System.AppDomain.GetAssemblies,
-        //     to a custom list of assemblies. These custom assemblies are filterd by query
-        //     and typically should just include the executing application assemblies. Assemblies
-        //     starting with System, Microsoft, and netstandard are automatically omitted.
-        //
-        // Parameters:
-        //   assemblies:
-        //     List of active assemblies.
-        //
-        //   query:
-        //     Required query to distinguish the list of assemblies.
+        /// <summary>
+        /// Filter list of assemblies, assumed to be generated by <see cref="AppDomain.GetAssemblies"/>,
+        /// to a custom list of assemblies. These custom assemblies are filterd by <paramref name="query"/>
+        /// and typically should just include the executing application assemblies.
+        /// Assemblies starting with System, Microsoft, and netstandard are automatically omitted.
+        /// </summary>
+        /// <param name="assemblies">List of active assemblies.</param>
+        /// <param name="query">Required query to distinguish the list of assemblies.</param>
+        /// <returns></returns>
         public static IEnumerable<Assembly> FilterCustomAssemblies(this IEnumerable<Assembly> assemblies, Func<Assembly, bool> query)
         {
             Guard.IsNotNull(query, nameof(query));
-            return from a in assemblies.Where(query)
-                   where !string.IsNullOrEmpty(a.FullName)
-                   let fullName = a.FullName!
-                   where !fullName.StartsWith("System.")
-                   where !fullName.StartsWith("Microsoft.")
-                   where !fullName.StartsWith("netstandard")
-                   select a;
+
+            return assemblies.Where(query)
+                             .Where(a => !a.FullName.StartsWith("System."))
+                             .Where(a => !a.FullName.StartsWith("Microsoft."))
+                             .Where(a => !a.FullName.StartsWith("netstandard"));
         }
 
-        //
-        // Summary:
-        //     Get all types in assembly that have Attribute T attached.
-        //
-        // Parameters:
-        //   assembly:
-        //     Valid assembly.
-        //
-        //   exportableOnly:
-        //     Whether to include just the exportable types in the assembly or all class types.
-        //
-        //
-        // Type parameters:
-        //   T:
-        //     Specified attribute type.
+        /// <summary>
+        /// Get all types in <paramref name="assembly"/> that have Attribute <typeparamref name="T"/> attached.
+        /// </summary>
+        /// <typeparam name="T">Specified attribute type.</typeparam>
+        /// <param name="assembly">Valid assembly.</param>
+        /// <param name="exportableOnly">Whether to include just the exportable types in the assembly or all class types.</param>
+        /// <returns></returns>
         public static IEnumerable<Type> GetTypesWithAttribute<T>(this Assembly assembly, bool exportableOnly = false) where T : Attribute
         {
             Guard.IsNotNull(assembly, nameof(assembly));
-            return (exportableOnly ? assembly.GetExportedTypes() : assembly.GetTypes()).Where((Type t) => t.IsClass && t.GetCustomAttribute<T>() != null);
+
+            return (exportableOnly ? assembly.GetExportedTypes() : assembly.GetTypes())
+                           .Where(t => t.IsClass && t.GetCustomAttribute<T>() != null);
         }
     }
 }

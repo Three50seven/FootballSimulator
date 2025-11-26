@@ -1,4 +1,5 @@
-﻿using Common.EntityFrameworkCore;
+﻿using Common.Core.Domain;
+using Common.EntityFrameworkCore;
 using FootballSimulator.Core;
 using FootballSimulator.Core.Domain;
 using Microsoft.EntityFrameworkCore;
@@ -24,5 +25,13 @@ namespace FootballSimulator.Infrastructure.Data
 
 
         public virtual DbSet<User>? Users { get; set; }
+        public virtual DbSet<ApplicationUser>? ApplicationUsers { get; set; }
+        public virtual DbSet<Role>? Roles { get; set; }
+        public virtual DbSet<UserRole>? UserRoles { get; set; }
+        public virtual DbSet<UserLoginHistory>? UserLoginHistories { get; set; }
+
+        public virtual DbSet<EntityType>? EntityTypes { get; set; }
+        public virtual DbSet<EntityHistory>? EntityHistories { get; set; }
+        public virtual DbSet<EntityHistoryChange>? EntityHistoryChanges { get; set; }
     }
 }
