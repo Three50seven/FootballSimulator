@@ -4,6 +4,7 @@ using FootballSimulator.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballSimulator.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(FootballSimulatorDbContext))]
-    partial class FootballSimulatorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251201180847_AddIdentityContext")]
+    partial class AddIdentityContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +50,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("entity_histories", (string)null);
+                    b.ToTable("entity_histories");
                 });
 
             modelBuilder.Entity("Common.Core.Domain.EntityHistoryChange", b =>
@@ -67,7 +70,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     b.HasIndex("EntityHistoryId");
 
-                    b.ToTable("entity_history_changes", (string)null);
+                    b.ToTable("entity_history_changes");
                 });
 
             modelBuilder.Entity("Common.Core.Domain.EntityType", b =>
@@ -84,7 +87,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("entity_types", (string)null);
+                    b.ToTable("entity_types");
 
                     b.HasData(
                         new
@@ -113,7 +116,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("roles");
 
                     b.HasData(
                         new
@@ -159,7 +162,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("users", (string)null);
+                    b.ToTable("users");
                 });
 
             modelBuilder.Entity("FootballSimulator.Core.Domain.UserLoginHistory", b =>
@@ -178,7 +181,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("user_login_histories", (string)null);
+                    b.ToTable("user_login_histories");
                 });
 
             modelBuilder.Entity("FootballSimulator.Core.Domain.UserRole", b =>
@@ -195,7 +198,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("user_roles", (string)null);
+                    b.ToTable("user_roles");
                 });
 
             modelBuilder.Entity("FootballSimulator.Infrastructure.Data.ApplicationUser", b =>
@@ -449,7 +452,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Common.Core.Domain.EntityHistory.Event#Common.Core.Domain.UserCommandEvent", "Event", b1 =>
+                    b.OwnsOne("Common.Core.Domain.UserCommandEvent", "Event", b1 =>
                         {
                             b1.Property<long>("EntityHistoryId")
                                 .HasColumnType("bigint");
@@ -468,7 +471,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                             b1.HasIndex("UserId");
 
-                            b1.ToTable("entity_histories", (string)null);
+                            b1.ToTable("entity_histories");
 
                             b1.WithOwner()
                                 .HasForeignKey("EntityHistoryId");
@@ -496,7 +499,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Common.Core.Domain.EntityHistoryChange.Change#Common.Core.Domain.EntityChange", "Change", b1 =>
+                    b.OwnsOne("Common.Core.Domain.EntityChange", "Change", b1 =>
                         {
                             b1.Property<long>("EntityHistoryChangeId")
                                 .HasColumnType("bigint");
@@ -515,13 +518,13 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                             b1.HasKey("EntityHistoryChangeId");
 
-                            b1.ToTable("entity_history_changes", (string)null);
+                            b1.ToTable("entity_history_changes");
 
                             b1.WithOwner()
                                 .HasForeignKey("EntityHistoryChangeId");
                         });
 
-                    b.OwnsOne("Common.Core.Domain.EntityHistoryChange.Property#Common.Core.Domain.EntityProperty", "Property", b1 =>
+                    b.OwnsOne("Common.Core.Domain.EntityProperty", "Property", b1 =>
                         {
                             b1.Property<long>("EntityHistoryChangeId")
                                 .HasColumnType("bigint");
@@ -546,7 +549,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                             b1.HasKey("EntityHistoryChangeId");
 
-                            b1.ToTable("entity_history_changes", (string)null);
+                            b1.ToTable("entity_history_changes");
 
                             b1.WithOwner()
                                 .HasForeignKey("EntityHistoryChangeId");
@@ -563,7 +566,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("FootballSimulator.Core.Domain.User", b =>
                 {
-                    b.OwnsOne("FootballSimulator.Core.Domain.User.Name#Common.Core.Domain.Name", "Name", b1 =>
+                    b.OwnsOne("Common.Core.Domain.Name", "Name", b1 =>
                         {
                             b1.Property<int>("UserId")
                                 .HasColumnType("int");
@@ -582,7 +585,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                             b1.HasKey("UserId");
 
-                            b1.ToTable("users", (string)null);
+                            b1.ToTable("users");
 
                             b1.WithOwner()
                                 .HasForeignKey("UserId");
@@ -594,7 +597,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("FootballSimulator.Core.Domain.UserLoginHistory", b =>
                 {
-                    b.OwnsOne("FootballSimulator.Core.Domain.UserLoginHistory.Event#Common.Core.Domain.UserCommandEvent", "Event", b1 =>
+                    b.OwnsOne("Common.Core.Domain.UserCommandEvent", "Event", b1 =>
                         {
                             b1.Property<int>("UserLoginHistoryId")
                                 .HasColumnType("int");
@@ -613,7 +616,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                             b1.HasIndex("UserId");
 
-                            b1.ToTable("user_login_histories", (string)null);
+                            b1.ToTable("user_login_histories");
 
                             b1.HasOne("FootballSimulator.Core.Domain.User", "User")
                                 .WithMany()

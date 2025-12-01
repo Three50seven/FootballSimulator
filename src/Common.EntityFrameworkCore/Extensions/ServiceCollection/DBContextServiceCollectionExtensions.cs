@@ -13,6 +13,51 @@ namespace Common.EntityFrameworkCore
 
         /// <summary>
         /// Registers <typeparamref name="TContext"/> as a DbContext on the service collection.
+        /// This method is intended for contexts that DO NOT use the custom <see cref="DbContextBase{TContextType}"/> 
+        /// base class, such as an IdentityDbContext.
+        /// </summary>
+        /// <typeparam name="TContext">Application DbContext type.</typeparam>
+        /// <param name="services">Existing services collection.</param>
+        /// <param name="configuration">Required configuration from the executing application.</param>
+        /// <param name="connStringName">Name of the connection string found in the ConnectionStrings section of <see cref="IConfiguration"/>.</param>
+        /// <param name="buildOptions">Optional callback for building DbContext options.</param>
+        /// <param name="sqlBuildOptions">Optional callback for building the SqlServer DbContext options.</param>
+        /// <param name="contextLifetime">The lifetime with which to register the DbContext service in the container. Should almost always be scoped.</param>
+        /// <param name="optionsLifetime">The lifetime with which to register the DbContextOptions service in the container. Defaults to singleton to allow for use in singleton services (like a factory).</param>
+        /// <param name="registerAsDefaultContext">Whether this DbContext should be registered for the generic base items <see cref="DbContext"/> and <see cref="IUnitOfWork"/>. Defaults to true.</param>
+        /// <returns></returns>
+        public static IServiceCollection AddIdentityDatabaseContext<TContext>(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            string connStringName = DefaultConnStringName,
+            Action<DbContextOptionsBuilder>? buildOptions = null,
+            Action<SqlServerDbContextOptionsBuilder>? sqlBuildOptions = null,
+            ServiceLifetime contextLifetime = ServiceLifetime.Scoped,
+            ServiceLifetime optionsLifetime = ServiceLifetime.Singleton,
+            bool registerAsDefaultContext = true)
+            // We use the same constraint as AddDbContext, assuming the Identity context 
+            // is also configured as an IUnitOfWork.
+            where TContext : DbContext, IUnitOfWork
+        {
+            // Call the core registration logic. This registers TContext, DbContext, and IUnitOfWork.
+            services.AddDbContext<TContext>(
+                configuration,
+                connStringName,
+                buildOptions,
+                sqlBuildOptions,
+                contextLifetime,
+                optionsLifetime,
+                registerAsDefaultContext);
+
+            // NOTE: We skip the services.AddScoped<DbContextBase<TContext>>(...) registration,
+            // as the Identity context will not inherit from DbContextBase<TContext>.
+
+            return services;
+        }
+
+
+        /// <summary>
+        /// Registers <typeparamref name="TContext"/> as a DbContext on the service collection.
         /// Uses connection string name <paramref name="connStringName"/> found in configuration.
         /// When using EF Core 5, an implementation of IDbContextFactory will be registered to used to resolve the DbContext.
         /// </summary>
@@ -37,8 +82,17 @@ namespace Common.EntityFrameworkCore
             bool registerAsDefaultContext = true)
             where TContext : DbContextBase<TContext>
         {
-            AddDbContext<TContext>(services, configuration, connStringName, buildOptions, sqlBuildOptions, contextLifetime, optionsLifetime, registerAsDefaultContext);
+            // 1. Call the core registration logic. This registers TContext, DbContext, and IUnitOfWork.
+            services.AddDbContext<TContext>(
+                configuration,
+                connStringName,
+                buildOptions,
+                sqlBuildOptions,
+                contextLifetime,
+                optionsLifetime,
+                registerAsDefaultContext);
 
+            // 2. Add the specific registration for the custom base class (DbContextBase<TContext>)
             services.AddScoped<DbContextBase<TContext>>(serviceProvider => serviceProvider.GetRequiredService<TContext>());
 
             return services;

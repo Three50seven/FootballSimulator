@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballSimulator.Infrastructure.Data
 {
-    public class FootballSimulatorDbContext : DbContextBase<FootballSimulatorDbContext>
+    public class FootballSimulatorDbContext : IdentityDbContextBase<ApplicationUser, string>
     {
         public FootballSimulatorDbContext(DbContextOptions<FootballSimulatorDbContext> options)
             : base(options)
@@ -24,10 +24,10 @@ namespace FootballSimulator.Infrastructure.Data
         }
 
 
-        public virtual DbSet<User>? Users { get; set; }
         public virtual DbSet<ApplicationUser>? ApplicationUsers { get; set; }
-        public virtual DbSet<Role>? Roles { get; set; }
-        public virtual DbSet<UserRole>? UserRoles { get; set; }
+        public new DbSet<User>? Users { get; set; }
+        public new DbSet<Role>? Roles { get; set; }
+        public new DbSet<UserRole>? UserRoles { get; set; }
         public virtual DbSet<UserLoginHistory>? UserLoginHistories { get; set; }
 
         public virtual DbSet<EntityType>? EntityTypes { get; set; }

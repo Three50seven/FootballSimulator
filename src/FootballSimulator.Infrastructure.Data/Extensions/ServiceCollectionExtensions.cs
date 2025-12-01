@@ -13,7 +13,7 @@ namespace FootballSimulator.Infrastructure.Data
     {
         public static IServiceCollection AddEFDataAccess(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDatabaseContext<FootballSimulatorDbContext>(configuration, buildOptions: options =>
+            services.AddIdentityDatabaseContext<FootballSimulatorDbContext>(configuration, buildOptions: options =>
             {
 #if !DEBUG
                 // Ref - https://docs.microsoft.com/en-us/ef/core/querying/related-data/eager#single-and-split-queries
