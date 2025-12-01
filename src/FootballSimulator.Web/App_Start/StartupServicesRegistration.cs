@@ -13,6 +13,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Razor;
 using System.Text.Json;
 using Common.AspNetCore.Mvc;
+using FootballSimulator.Core.Services;
+using FootballSimulator.Application.Services;
+using FootballSimulator.Web.Providers;
 
 namespace FootballSimulator.Web
 {
@@ -148,16 +151,19 @@ namespace FootballSimulator.Web
             .AddIdentityCookies();
 
 
-            //services.AddAuthentication(AuthConstants.DefaultScheme)
-            //        .AddStandardCookie(configuration, configureOptions: options =>
-            //        {
-            //            options.ExpireTimeSpan = TimeSpan.FromMinutes(0.5);
-            //            options.SlidingExpiration = false;
-            //        });
+            services.AddAuthentication(AuthConstants.DefaultScheme)
+                    .AddStandardCookie(configuration, configureOptions: options =>
+                    {
+                        var expirationTime = configuration.GetValue<int>("Authentication:TimeoutMinutes");
 
-            //services.AddScoped<IUserClaimsService, UserClaimsService>();
+                        options.ExpireTimeSpan = TimeSpan.FromMinutes(expirationTime);
+                        options.SlidingExpiration = false;
+                        options.Cookie.MaxAge = TimeSpan.FromMinutes(expirationTime);
+                    });
+
+            services.AddScoped<IUserClaimsService, UserClaimsService>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            //services.AddScoped<IIdentitySignOnService, IdentitySignOnService>();
+            services.AddScoped<IIdentitySignOnService, IdentitySignOnService>();
 
 #pragma warning disable CS8603 // Possible null reference argument.
             services.AddCurrentUser<IApplicationUser>(serviceProvider => serviceProvider.GetRequiredService<IHttpContextAccessor>().HttpContext?.ApplicationUser());
@@ -191,7 +197,7 @@ namespace FootballSimulator.Web
             Guard.IsNotNull(services, nameof(services));
 
             // add all custom App services here
-            //services.AddScoped<IUserLoginRecorder, UserLoginRecorder>();
+            services.AddScoped<IUserLoginRecorder, UserLoginRecorder>();
             //etc.
 
             // database and repositories

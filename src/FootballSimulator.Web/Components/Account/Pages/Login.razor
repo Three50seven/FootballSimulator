@@ -1,6 +1,9 @@
 ﻿@page "/Account/Login"
 
 @using System.ComponentModel.DataAnnotations
+@using Common.Core
+@using FootballSimulator.Application.Services
+@using FootballSimulator.Web.Providers
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @using FootballSimulator.Infrastructure.Data
@@ -9,6 +12,8 @@
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject IIdentitySignOnService _identitySignOnService
+@inject ISettings _settings
 
 <PageTitle>Log in</PageTitle>
 
@@ -92,7 +97,24 @@
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
         if (result.Succeeded)
         {
-            Logger.LogInformation("User logged in.");
+            var domainUrl = _settings.Get(SettingKeys.DomainUrl);
+            bool isValidReturnUrl = WebExtensions.IsLocalUrl(ReturnUrl) || ReturnUrl!.StartsWith(domainUrl); // local URLs are valid i.e. anything without domain: /valid-local-url, and anything starting with the domain
+
+            var signInResult = await _identitySignOnService.LoginAsync(Input.Email);
+            
+            if (signInResult.Succeeded)
+            {
+                Logger.LogInformation("User logged in.");
+            }
+            else
+            {
+                Logger.LogWarning("User logged in, but sign-on service reported an issue: {Errors}", string.Join(", ", signInResult.BrokenRules));              
+            }
+
+            if (!isValidReturnUrl)
+            {
+                ReturnUrl = NavigationManager.BaseUri;
+            }
             RedirectManager.RedirectTo(ReturnUrl);
         }
         else if (result.RequiresTwoFactor)

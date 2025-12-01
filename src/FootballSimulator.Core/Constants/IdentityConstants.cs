@@ -8,7 +8,7 @@
         public const string Email = "Email";
         public const string UserGuid = "Guid";
         public const string UserName = "UserName";
-        public const string ApplicationScheme = "ApplicationScheme";
-        public const string ExternalScheme = "ExternalScheme"; 
+        public const string ApplicationScheme = "Identity.Application";
+        public const string ExternalScheme = "Identity.External"; 
     }
 }

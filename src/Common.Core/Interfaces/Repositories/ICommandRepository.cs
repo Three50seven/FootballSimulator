@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace Common.Core
+﻿namespace Common.Core
 {
     /// <summary>
     /// Generic repository for standard command operations.

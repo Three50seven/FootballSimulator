@@ -1,8 +1,10 @@
+using FootballSimulator.Application.Services;
+using FootballSimulator.Infrastructure.Data;
 using FootballSimulator.Web.Components.Account.Pages;
 using FootballSimulator.Web.Components.Account.Pages.Manage;
-using FootballSimulator.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -43,10 +45,15 @@ namespace Microsoft.AspNetCore.Routing
             accountGroup.MapPost("/Logout", async (
                 ClaimsPrincipal user,
                 SignInManager<ApplicationUser> signInManager,
+                IIdentitySignOnService identitySignOnService,
                 [FromForm] string returnUrl) =>
             {
+                // 1. Clear Cookies and Session
                 await signInManager.SignOutAsync();
-                return TypedResults.LocalRedirect($"~/{returnUrl}");
+                await identitySignOnService.LogoutAsync();
+                               
+
+                return TypedResults.LocalRedirect($"~/");
             });
 
             var manageGroup = accountGroup.MapGroup("/Manage").RequireAuthorization();
