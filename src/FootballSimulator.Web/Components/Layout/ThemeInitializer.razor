@@ -1,4 +1,4 @@
-﻿@inject ThemeService ThemeService
+﻿@inject IThemeService themeService
 @inject IJSRuntime JS
 
 @code {
@@ -8,7 +8,7 @@
     {
         if (firstRender)
         {
-            await ThemeService.InitializeAsync();
+            await themeService.InitializeAsync();
             StateHasChanged();
         }
     }

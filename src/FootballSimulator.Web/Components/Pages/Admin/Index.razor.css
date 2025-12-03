@@ -1,0 +1,43 @@
+﻿.bi {
+    display: inline-block;
+    position: relative;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.75rem;
+    top: -1px;
+    background-size: cover;
+}
+
+/* Shared icon base: inherits color from element, scales to font size */
+.nav-icon {
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    background-repeat: no-repeat;
+    background-size: 1em 1em;
+}
+
+/* Light theme: icons dark */
+[data-bs-theme="light"] .nav-icon {
+    filter: none;
+}
+
+/* Dark theme: icons light gray/white */
+[data-bs-theme="dark"] .nav-icon {
+    filter: brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+/* Person fill */
+.svg-person.nav-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-person' viewBox='0 0 16 16'%3E%3Cpath d='M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z'/%3E%3C/svg%3E");
+}
+
+/* Stadium */
+.svg-stadium.nav-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E %3Cpath d='M2 6c0-1.1.9-2 2-2h8c1.1 0 2 .9 2 2v6c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6zm2-1c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h8c.55 0 1-.45 1-1V6c0-.55-.45-1-1-1H4z'/%3E %3Cpath d='M8 2l2 2H6l2-2zM3 4l1.5-2L6 4H3zm7 0l1.5-2L13 4h-3z'/%3E %3C/svg%3E");
+}
+
+/* Football-Helmet */
+.svg-football-helmet.nav-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewBox='0 0 16 16'%3E %3Cpath d='M8 2a6 6 0 0 0-6 6c0 2.21 1.2 4.15 3 5.19V14h2v-1h2v1h2v-1.81c1.8-1.04 3-2.98 3-5.19a6 6 0 0 0-6-6z'/%3E %3Cpath d='M11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0z'/%3E %3Cpath d='M13 9h1v2h-1v-2zM2 9h1v2H2V9z'/%3E %3C/svg%3E");
+}

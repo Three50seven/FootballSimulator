@@ -198,7 +198,7 @@ namespace FootballSimulator.Web
 
             // add all custom App services here
             services.AddScoped<IUserLoginRecorder, UserLoginRecorder>();
-            services.AddScoped<ThemeService>();
+            services.AddScoped<IThemeService, ThemeService>();
             //etc.
 
             // database and repositories

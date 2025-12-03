@@ -1,8 +1,9 @@
-﻿using Microsoft.JSInterop;
+﻿using FootballSimulator.Application.Services;
+using Microsoft.JSInterop;
 
-namespace FootballSimulator.Web
+namespace FootballSimulator.Web.Providers
 {
-    public class ThemeService
+    public class ThemeService : IThemeService
     {
         private readonly IJSRuntime _js;
         public string CurrentTheme { get; private set; } = "dark";

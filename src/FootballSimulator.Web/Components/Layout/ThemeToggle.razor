@@ -1,4 +1,4 @@
-﻿@inject ThemeService ThemeService
+﻿@inject IThemeService themeService
 
 @rendermode InteractiveServer
 
@@ -7,6 +7,6 @@
 @code {
     private async Task ToggleTheme()
     {
-        await ThemeService.ToggleThemeAsync();
+        await themeService.ToggleThemeAsync();
     }
 }

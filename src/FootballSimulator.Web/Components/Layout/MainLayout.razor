@@ -1,5 +1,5 @@
 ﻿@inherits LayoutComponentBase
-@inject ThemeService ThemeService
+@inject IThemeService themeService
 
 <div class="page">
     <div class="sidebar">
@@ -25,7 +25,7 @@
     {
         if (firstRender)
         {
-            await ThemeService.InitializeAsync();
+            await themeService.InitializeAsync();
         }
     }
 }
