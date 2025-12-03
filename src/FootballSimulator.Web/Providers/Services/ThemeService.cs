@@ -7,6 +7,8 @@ namespace FootballSimulator.Web
         private readonly IJSRuntime _js;
         public string CurrentTheme { get; private set; } = "dark";
 
+        public event Action? OnThemeChanged;
+
         public ThemeService(IJSRuntime js)
         {
             _js = js;
@@ -14,33 +16,28 @@ namespace FootballSimulator.Web
 
         public async Task InitializeAsync()
         {
-            var savedTheme = await _js.InvokeAsync<string>("localStorage.getItem", "theme");
-            if (string.IsNullOrEmpty(savedTheme))
+            try
             {
-                savedTheme = "dark";
-                await _js.InvokeVoidAsync("localStorage.setItem", "theme", savedTheme);
+                var savedTheme = await _js.InvokeAsync<string>("localStorage.getItem", "theme");
+                if (string.IsNullOrEmpty(savedTheme))
+                {
+                    savedTheme = "dark";
+                }
+                CurrentTheme = savedTheme;
+                // The JS themeManager already applied it on page load
             }
-
-            CurrentTheme = savedTheme;
-            await ApplyThemeAsync(savedTheme);
-        }
-
-        public async Task ApplyThemeAsync(string theme)
-        {
-            CurrentTheme = theme;
-            await _js.InvokeVoidAsync("document.body.setAttribute", "data-bs-theme", theme);
+            catch (Exception)
+            {
+                CurrentTheme = "dark";
+            }
         }
 
         public async Task ToggleThemeAsync()
         {
             var newTheme = CurrentTheme == "dark" ? "light" : "dark";
-            await _js.InvokeVoidAsync("localStorage.setItem", "theme", newTheme);
-            await ApplyThemeAsync(newTheme);
-        }
-        public async Task ReapplyThemeAsync()
-        {
-            // Always apply the current theme
-            await _js.InvokeVoidAsync("document.body.setAttribute", "data-bs-theme", CurrentTheme);
+            CurrentTheme = newTheme;
+            await _js.InvokeVoidAsync("setBodyThemeClass", newTheme);
+            OnThemeChanged?.Invoke();
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿@inject ThemeService ThemeService
-@rendermode InteractiveServer
+@inject IJSRuntime JS
 
 @code {
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             await ThemeService.InitializeAsync();
-        }
-        else
-        {
-            await ThemeService.ReapplyThemeAsync();
+            StateHasChanged();
         }
     }
 }
