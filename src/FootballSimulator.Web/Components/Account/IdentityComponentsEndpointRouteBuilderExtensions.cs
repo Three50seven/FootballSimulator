@@ -4,7 +4,6 @@ using FootballSimulator.Web.Components.Account.Pages;
 using FootballSimulator.Web.Components.Account.Pages.Manage;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;

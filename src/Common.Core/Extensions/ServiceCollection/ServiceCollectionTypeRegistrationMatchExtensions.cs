@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Common.Core.Domain;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Common.Core
 {

@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="User\Edit\" />
     <Folder Include="User\Manage\" />
   </ItemGroup>
 

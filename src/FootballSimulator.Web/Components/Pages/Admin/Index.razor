@@ -1,0 +1,28 @@
+﻿@page "/admin"
+
+<PageTitle>Admin</PageTitle>
+
+<h1>You are authenticated</h1>
+
+<AuthorizeView>
+    Hello @context.User.Identity?.Name!
+
+    <p>Use the admin menu to customize the Football Simulator.</p>    
+
+    <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+        <nav class="flex-column">
+
+            <div class="ps-3">
+                <NavLink class="nav-link" href="/admin/manage/stadiums">
+                    <span class="bi bi-building" aria-hidden="true"></span> Stadiums
+                </NavLink>
+                <NavLink class="nav-link" href="/admin/manage/users">
+                    <span class="bi bi-people" aria-hidden="true"></span> Users
+                </NavLink>
+                <NavLink class="nav-link" href="/admin/manage/teams">
+                    <span class="bi bi-flag" aria-hidden="true"></span> Teams
+                </NavLink>
+            </div>
+        </nav>
+    </div>
+</AuthorizeView>

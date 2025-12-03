@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Common.Core.Domain
+﻿namespace Common.Core.Domain
 {
     public class TypeRegistrationMatch : ValueObject<TypeRegistrationMatch>
     {

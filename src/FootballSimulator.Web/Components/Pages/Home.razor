@@ -1,7 +1,29 @@
 ﻿@page "/"
+@rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<div class="top-row px-4">
+    <button class="btn btn-secondary" @onclick="ToggleTheme">Toggle Theme</button>
+</div>
+
+<h1>Football Simulator</h1>
+
+Login to manage your teams and players, or register as a new user to get started!
+
+@code {
+    private bool isDark = true;
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private async Task ToggleTheme()
+    {
+        isDark = !isDark;
+        var theme = isDark ? "dark" : "light";
+        await JS.InvokeVoidAsync("console.log", $"Theme set to {theme}");
+
+        await JS.InvokeVoidAsync("document.body.setAttribute", "data-bs-theme", theme);
+    }
+}
+
