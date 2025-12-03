@@ -3,7 +3,10 @@ using Common.Core.Domain;
 using Common.Core.Validation;
 using FootballSimulator.Application.Services;
 using FootballSimulator.Core.Interfaces;
+using FootballSimulator.Infrastructure.Data;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace FootballSimulator.Web.Providers
@@ -14,17 +17,20 @@ namespace FootballSimulator.Web.Providers
         private readonly IUserRepository _userRepository;
         private readonly IUserClaimsService _userClaimsService;
         private readonly IUserLoginRecorder _userLoginRecorder;
+        private readonly FootballSimulatorDbContext _dbContext;
 
         public IdentitySignOnService(
             IHttpContextAccessor httpContextAccessor,
             IUserRepository userRepository,
             IUserClaimsService userClaimsService,
-            IUserLoginRecorder userLoginRecorder)
+            IUserLoginRecorder userLoginRecorder,
+            FootballSimulatorDbContext dbContext)
         {
             _httpContextAccessor = httpContextAccessor;
             _userRepository = userRepository;
             _userClaimsService = userClaimsService;
             _userLoginRecorder = userLoginRecorder;
+            _dbContext = dbContext;
         }
 
         public async Task<CommandResult> LoginAsync(string userName)
@@ -39,7 +45,20 @@ namespace FootballSimulator.Web.Providers
                 {
                     return CommandResult.Fail("User not found.");
                 }
-                var claims = _userClaimsService.BuildClaims(user);
+                if (_dbContext.ApplicationUsers == null)
+                    return CommandResult.Fail("Application users data set is not available.");
+                
+                // Look up the ApplicationUser by the User.Id
+                var applicationUser = await _dbContext.ApplicationUsers
+                .FirstOrDefaultAsync(au => au.UserId == user.Id);
+
+                if (applicationUser == null)
+                {
+                    return CommandResult.Fail("Application user not found.");
+                }
+
+                var applicationUserGuid = applicationUser.Id.ToString();
+                var claims = _userClaimsService.BuildClaims(user, applicationUserGuid);
                 var httpContext = _httpContextAccessor.HttpContext;
 
                 if (httpContext != null)

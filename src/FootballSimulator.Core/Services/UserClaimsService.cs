@@ -7,19 +7,18 @@ namespace FootballSimulator.Core.Services
 {
     public class UserClaimsService : IUserClaimsService
     {
-        public IEnumerable<Claim> BuildClaims(User user)
+        public IEnumerable<Claim> BuildClaims(User user, string applicationUserGuid)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.NameIdentifier, applicationUserGuid),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
-                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),
-                new Claim(IdentityConstants.UserId, user.Id.ToString()),
+                new Claim(ClaimTypes.Email, user.Email ?? string.Empty),                
+                new Claim(IdentityConstants.UserId, user.Id.ToString() ?? string.Empty),
                 new Claim(IdentityConstants.UserName, user.UserName ?? string.Empty),
                 new Claim(IdentityConstants.Email, user.Email ?? ""),
                 new Claim(IdentityConstants.FirstName, user.Name.FirstName ?? ""),
-                new Claim(IdentityConstants.LastName, user.Name.LastName ?? ""),
-                new Claim(IdentityConstants.UserGuid, user.Guid.ToString())
+                new Claim(IdentityConstants.LastName, user.Name.LastName ?? "")
             };
 
             foreach (var userRole in user.UserRoles)

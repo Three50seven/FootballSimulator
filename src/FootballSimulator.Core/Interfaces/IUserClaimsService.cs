@@ -5,6 +5,6 @@ namespace FootballSimulator.Core.Interfaces
 {
     public interface IUserClaimsService
     {
-        IEnumerable<Claim> BuildClaims(User user);
+        IEnumerable<Claim> BuildClaims(User user, string applicationUserGuid);
     }
 }
