@@ -1,0 +1,12 @@
+﻿@inject ThemeService ThemeService
+
+@rendermode InteractiveServer
+
+<button class="btn btn-secondary" @onclick="ToggleTheme">Toggle Theme</button>
+
+@code {
+    private async Task ToggleTheme()
+    {
+        await ThemeService.ToggleThemeAsync();
+    }
+}

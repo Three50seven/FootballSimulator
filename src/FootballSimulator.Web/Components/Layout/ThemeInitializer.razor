@@ -1,0 +1,16 @@
+﻿@inject ThemeService ThemeService
+@rendermode InteractiveServer
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await ThemeService.InitializeAsync();
+        }
+        else
+        {
+            await ThemeService.ReapplyThemeAsync();
+        }
+    }
+}
