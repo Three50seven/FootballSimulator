@@ -98,7 +98,11 @@
         if (result.Succeeded)
         {
             var domainUrl = _settings.Get(SettingKeys.DomainUrl);
-            bool isValidReturnUrl = WebExtensions.IsLocalUrl(ReturnUrl) || ReturnUrl!.StartsWith(domainUrl); // local URLs are valid i.e. anything without domain: /valid-local-url, and anything starting with the domain
+            if (ReturnUrl == null)
+            {
+                ReturnUrl = NavigationManager.BaseUri;
+            }
+            bool isValidReturnUrl = WebExtensions.IsLocalUrl(ReturnUrl) || ReturnUrl.StartsWith(domainUrl); // local URLs are valid i.e. anything without domain: /valid-local-url, and anything starting with the domain
 
             var signInResult = await _identitySignOnService.LoginAsync(Input.Email);
             
