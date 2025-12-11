@@ -14,14 +14,35 @@ else
 {
     @if (!showForm)
     {
-        <button class="btn btn-primary" @onclick="ShowAddForm">+ Add New</button>
+        <button class="btn btn-primary me-1" @onclick="ShowAddForm">+ Add New</button>
         <ul>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Name</strong>
+                    <span class="text-muted">- UserName (Email)</span>
+                </div>
+                <div class="btn-group align-content-center">
+                    Manage
+                </div>
+            </li>
+            <li class="list-group-item">
+                <hr />
+            </li>
             @foreach (var user in userModel.Results)
             {
-                <li>
-                    @user.FirstName @user.LastName - @user.UserName (@user.Email)
-                    <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditForm(user.Guid)">Edit</button>
-                    <button class="btn btn-sm btn-secondary" @onclick="() => DeleteUser(user.Guid)">X Delete</button>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>@user.FirstName @user.LastName</strong>
+                        <span class="text-muted">- @user.UserName (@user.Email)</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-secondary me-1" @onclick="() => ShowEditForm(user.Guid)">
+                            Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger me-1" @onclick="() => DeleteUser(user.Guid)">
+                            Delete
+                        </button>
+                    </div>
                 </li>
             }
         </ul>
