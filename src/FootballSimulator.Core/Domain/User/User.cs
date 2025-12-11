@@ -18,14 +18,21 @@ namespace FootballSimulator.Core.Domain
             Email = email.SetEmptyToNull();
             Name = name;
         }
-                
+        public User(string userName, string email, Name name, string applicationUserId)
+        {
+            UserName = userName;
+            Email = email.SetEmptyToNull();
+            Name = name;
+            ApplicationUserId = applicationUserId.SetEmptyToNull();
+        }
+
         public bool Archive { get; set; }        
-        public string? Email { get; private set; }
-        public Name Name { get; private set; }
+        public string? Email { get; set; }
+        public Name Name { get; set; }
         public UserNameDisplay NameDisplay => new UserNameDisplay(UserName, Name);
 
         public string? UserName { get; private set; }
-        public string? ApplicationUserGuid { get; set; }        
+        public string? ApplicationUserId { get; set; }        
 
         [TrackChanges]
         public IEnumerable<UserRole> UserRoles { get; private set; } = new List<UserRole>();

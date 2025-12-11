@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using Common.Core;
 using Common.Core.Interfaces;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Common.AspNetCore.Mvc
 {

@@ -1,6 +1,7 @@
 ﻿@page "/admin/manage"
 @using FootballSimulator.Core.Interfaces
 @using Microsoft.AspNetCore.Components.Forms
+@rendermode InteractiveServer
 
 <PageTitle>Manage Users</PageTitle>
 
@@ -11,62 +12,85 @@
 }
 else
 {
-    <ul>
-        @foreach (var user in userModel.Results)
-        {
-            <li>
-                [@user.Id] @user.FirstName @user.LastName - @user.UserName (@user.Email)
-                <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditForm(user.Guid)">Edit</button>
-            </li>
-        }
-    </ul>
+    @if (!showForm)
+    {
+        <button class="btn btn-primary" @onclick="ShowAddForm">+ Add New</button>
+        <ul>
+            @foreach (var user in userModel.Results)
+            {
+                <li>
+                    @user.FirstName @user.LastName - @user.UserName (@user.Email)
+                    <button class="btn btn-sm btn-secondary" @onclick="() => ShowEditForm(user.Guid)">Edit</button>
+                    <button class="btn btn-sm btn-secondary" @onclick="() => DeleteUser(user.Guid)">X Delete</button>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <button class="btn btn-secondary" @onclick="CancelForm">Cancel</button>
 
-    <button class="btn btn-primary" @onclick="ShowAddForm">Add User</button>
+        <EditForm Model="@editUser" OnValidSubmit="SaveUser" OnInvalidSubmit="HandleInvalidUser">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+                    
+            <div class="mb-3">
+                <label>User Name</label>
+                @if (editUser.IsNew)
+                {
+                    <InputText @bind-Value="editUser.UserName" class="form-control" />
+                    <ValidationMessage For="@(() => editUser.UserName)" />
+                }
+                else
+                {
+                    <input value="@editUser.UserName" class="form-control input-disabled" readonly />
+                }
+            </div>
+
+            <div class="mb-3">
+                <label>Application User ID</label>
+                @if (editUser.IsNew)
+                {
+                    <InputText @bind-Value="editUser.ApplicationUserId" class="form-control" />
+                    <ValidationMessage For="@(() => editUser.ApplicationUserId)" />
+                }
+                else
+                {
+                    <input value="@editUser.ApplicationUserId" class="form-control input-disabled" readonly />
+                }
+            </div>
+
+            <div class="mb-3">
+                <label>First Name</label>
+                <InputText @bind-Value="editUser.FirstName" class="form-control" />
+                <ValidationMessage For="@(() => editUser.FirstName)" />
+            </div>
+
+            <div class="mb-3">
+                <label>Last Name</label>
+                <InputText @bind-Value="editUser.LastName" class="form-control" />
+                <ValidationMessage For="@(() => editUser.LastName)" />
+            </div>
+
+            <div class="mb-3">
+                <label>Email</label>
+                <InputText @bind-Value="editUser.Email" class="form-control" />
+                <ValidationMessage For="@(() => editUser.Email)" />
+            </div>
+
+            <button type="submit" class="btn btn-success">@formModeLabel</button>
+        </EditForm>
+    }
 }
 
-@if (showForm)
-{
-    <EditForm Model="@editUser" OnValidSubmit="SaveUser" OnInvalidSubmit="HandleInvalidUser">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div class="mb-3">
-            <label>User Name</label>
-            <InputText @bind-Value="editUser.UserName" class="form-control" />
-            <ValidationMessage For="@(() => editUser.UserName)" />
-        </div>
-
-        <div class="mb-3">
-            <label>First Name</label>
-            <InputText @bind-Value="editUser.FirstName" class="form-control" />
-            <ValidationMessage For="@(() => editUser.FirstName)" />
-        </div>
-
-        <div class="mb-3">
-            <label>Last Name</label>
-            <InputText @bind-Value="editUser.LastName" class="form-control" />
-            <ValidationMessage For="@(() => editUser.LastName)" />
-        </div>
-
-        <div class="mb-3">
-            <label>Email</label>
-            <InputText @bind-Value="editUser.Email" class="form-control" />
-            <ValidationMessage For="@(() => editUser.Email)" />
-        </div>
-
-        <button type="submit" class="btn btn-success">@formModeLabel</button>
-    </EditForm>
-}
-
-@code {    
+@code {
     [Inject] private IUserManageModelService _userManageService { get; set; } = default!;
     [Inject] private IUserEditService _userEditService { get; set; } = default!;
-    [Inject] private IUserRepository _userRepository { get; set; } = default!;
     private bool showForm = false;
     private UserManageModel? userModel;
     private UserEditModel editUser = new UserEditModel();
-    private string formModeLabel => editUser.IsNew ? "Add User" : "Edit User"; 
-        
+    private string formModeLabel => $"{editUser.CreateOrEdit} User"; 
+
     protected override async Task OnInitializedAsync()
     {
         userModel = await _userManageService.BuildModelAsync();
@@ -79,26 +103,22 @@ else
     }
 
 
-    private void ShowEditForm(Guid userGuid)
-    {
-        var user = _userRepository.GetByGuid(userGuid);
+    private async Task ShowEditForm(Guid userGuid)
+    {        
+        UserEditModel? userEditModel = await _userEditService.BuildModelAsync(userGuid);
 
-        if (user is null)
+        if (userEditModel is null)
         {
-            Console.WriteLine($"User with GUID {userGuid} not found.");
             return;
         }
-
-        // clone or assign existing user
-        editUser = new UserEditModel
-        {
-            Id = user.Id,
-            UserName = user.UserName,
-            FirstName = user.Name.FirstName,
-            LastName = user.Name.LastName,
-            Email = user.Email
-        };
+        editUser = userEditModel;
         showForm = true;
+    }
+
+    private async Task DeleteUser(Guid userGuid)
+    {
+        await _userEditService.DeleteAsync(userGuid);
+        userModel = await _userManageService.BuildModelAsync();
     }
 
     private void CancelForm()

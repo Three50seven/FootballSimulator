@@ -4,6 +4,7 @@ using FootballSimulator.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballSimulator.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(FootballSimulatorDbContext))]
-    partial class FootballSimulatorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251211194716_RemoveUserRelationFromApplicationUser")]
+    partial class RemoveUserRelationFromApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,10 +140,10 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<string>("ApplicationUserGuid")
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)")
-                        .HasColumnName("application_user_id");
+                        .HasColumnName("application_user_guid");
 
                     b.Property<bool>("Archive")
                         .HasColumnType("bit")
@@ -164,7 +167,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
+                    b.HasIndex("ApplicationUserGuid");
 
                     b.ToTable("users");
                 });
@@ -564,7 +567,7 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
                 {
                     b.HasOne("FootballSimulator.Infrastructure.Data.ApplicationUser", null)
                         .WithMany()
-                        .HasForeignKey("ApplicationUserId")
+                        .HasForeignKey("ApplicationUserGuid")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.OwnsOne("Common.Core.Domain.Name", "Name", b1 =>

@@ -11,7 +11,7 @@ namespace FootballSimulator.Core.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.ApplicationUserGuid ?? string.Empty),
+                new Claim(ClaimTypes.NameIdentifier, user.ApplicationUserId ?? string.Empty),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty),                
                 new Claim(IdentityConstants.UserId, user.Id.ToString() ?? string.Empty),

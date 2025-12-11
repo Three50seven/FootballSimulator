@@ -49,3 +49,19 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.input-disabled {
+    font-style: italic;
+    position: relative; /* allow overlay positioning */
+    pointer-events: none; /* prevent interaction */
+    background-color: var(--bs-secondary-bg); 
+    color: var(--bs-secondary-color); /* dimmed text */
+}
+
+/* Override for light theme */
+@media (prefers-color-scheme: light) {
+    .input-disabled {
+        background-color: rgba(255, 255, 255, 0.1); /* subtle light overlay */
+        color: var(--bs-secondary-color); /* keep text dimmed */
+    }
+}

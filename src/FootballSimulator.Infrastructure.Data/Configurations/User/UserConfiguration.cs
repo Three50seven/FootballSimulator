@@ -13,7 +13,7 @@ namespace FootballSimulator.Infrastructure.Data
 
             builder.Property(u => u.UserName).HasMaxLength(100);
             builder.Property(u => u.Email).HasMaxLength(256);
-            builder.Property(u => u.ApplicationUserGuid).HasMaxLength(450);
+            builder.Property(u => u.ApplicationUserId).HasMaxLength(450);
 
             builder.OwnsOne(u => u.Name, nameBuilder =>
             {
@@ -27,7 +27,7 @@ namespace FootballSimulator.Infrastructure.Data
 
             builder.HasOne<ApplicationUser>()
                 .WithMany()
-                .HasForeignKey(u => u.ApplicationUserGuid)
+                .HasForeignKey(u => u.ApplicationUserId)
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
         }
