@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="User\Manage\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FootballSimulator.Core\FootballSimulator.Core.csproj" />
   </ItemGroup>
 
