@@ -8,12 +8,13 @@ using FootballSimulator.Core.Interfaces;
 
 namespace FootballSimulator.Application.Services
 {
-    public class UserEditService : IUserEditService
+    public class UserEditService : EditServiceBase<Core.Domain.User,IUserRepository>, IUserEditService
     {
         private readonly IUserRepository _userRepository;
         private readonly IValidator<UserEditModel> _validator;
 
-        public UserEditService(IUserRepository userRepository, IValidator<UserEditModel> validator)
+        public UserEditService(IUserRepository userRepository, IUnitOfWork unitOfWork, IValidator<UserEditModel> validator)
+        : base(userRepository, unitOfWork) 
         {
             _userRepository = userRepository;
             _validator = validator;
@@ -50,7 +51,7 @@ namespace FootballSimulator.Application.Services
                 if (entity == null)
                     throw new DataObjectNotFoundException(nameof(User), guid);
 
-                await _userRepository.DeleteAsync(entity);
+                await DeleteAsync(entity);
 
                 return CommandResult.Success();
             }
@@ -101,7 +102,7 @@ namespace FootballSimulator.Application.Services
 
                     user.SetUserRoles(userRoles);
 
-                    await _userRepository.AddOrUpdateAsync(user);
+                    await AddOrUpdateAsync(user);
                 }
                 
                 return CommandResult.Success();
