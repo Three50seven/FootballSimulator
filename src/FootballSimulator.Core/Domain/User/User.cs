@@ -19,11 +19,13 @@ namespace FootballSimulator.Core.Domain
             Name = name;
         }
                 
-        public bool Archive { get; set; }
-        public string? UserName { get; private set; }
+        public bool Archive { get; set; }        
         public string? Email { get; private set; }
         public Name Name { get; private set; }
         public UserNameDisplay NameDisplay => new UserNameDisplay(UserName, Name);
+
+        public string? UserName { get; private set; }
+        public string? ApplicationUserGuid { get; set; }        
 
         [TrackChanges]
         public IEnumerable<UserRole> UserRoles { get; private set; } = new List<UserRole>();

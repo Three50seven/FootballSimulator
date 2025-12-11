@@ -17,14 +17,14 @@ namespace FootballSimulator.Infrastructure.Data
                                                                 .ThenInclude(ur => ur.Role)
                                                             .Where(u => u.Id != User.SystemUserId); //exclude system user from all user queries - note, this also prevents anyone from logging in as the system user
 
-        public async Task<User?> GetByUserNameAsync(string userName, CancellationToken cancellationToken = default, bool includeArchived = false)
+        public async Task<User?> GetByApplicationIdentityAsync(string userNameOrApplicationUserId, CancellationToken cancellationToken = default, bool includeArchived = false)
         {
             if (includeArchived)
                 return await DbSet.Include(u => u.UserRoles)
                             .ThenInclude(ur => ur.Role)
-                            .FirstOrDefaultAsync(u => u.UserName!.ToLower() == userName.ToLower());
+                            .FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserGuid, userNameOrApplicationUserId));
             else
-                return await EntitySet.FirstOrDefaultAsync(u => u.UserName!.ToLower() == userName.ToLower());
+                return await EntitySet.FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserGuid, userNameOrApplicationUserId));
         }
     }
 }

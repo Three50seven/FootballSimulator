@@ -7,11 +7,11 @@ namespace FootballSimulator.Core.Services
 {
     public class UserClaimsService : IUserClaimsService
     {
-        public IEnumerable<Claim> BuildClaims(User user, string applicationUserGuid)
+        public IEnumerable<Claim> BuildClaims(User user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, applicationUserGuid),
+                new Claim(ClaimTypes.NameIdentifier, user.ApplicationUserGuid ?? string.Empty),
                 new Claim(ClaimTypes.Name, user.UserName ?? string.Empty),
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty),                
                 new Claim(IdentityConstants.UserId, user.Id.ToString() ?? string.Empty),
