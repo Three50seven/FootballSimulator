@@ -14,7 +14,9 @@ else
 {
     @if (!showForm)
     {
-        <button class="btn btn-primary me-1" @onclick="ShowAddForm">+ Add New</button>
+        <div class="d-flex justify-content-end p-3">
+            <button class="btn btn-primary" @onclick="ShowAddForm">+ Add New</button>
+        </div>
         <ul>
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <div>
@@ -39,18 +41,23 @@ else
                         <button class="btn btn-sm btn-secondary me-1" @onclick="() => ShowEditForm(user.Guid)">
                             Edit
                         </button>
-                        <button class="btn btn-sm btn-danger me-1" @onclick="() => DeleteUser(user.Guid)">
+                        <button class="btn btn-sm btn-danger"
+                                @onclick="() => ShowConfirmModal(user.Guid)">
                             Delete
                         </button>
                     </div>
                 </li>
             }
         </ul>
+        <ConfirmActionModal @ref="deleteModal"
+                    Title="Delete User"
+                    Message="Are you sure you want to delete this user?"
+                    ActionName="Delete"
+                    OnConfirm="DeleteUser" />
+
     }
     else
     {
-        <button class="btn btn-secondary" @onclick="CancelForm">Cancel</button>
-
         <EditForm Model="@editUser" OnValidSubmit="SaveUser" OnInvalidSubmit="HandleInvalidUser">
             <DataAnnotationsValidator />
             <ValidationSummary />
@@ -99,7 +106,10 @@ else
                 <ValidationMessage For="@(() => editUser.Email)" />
             </div>
 
-            <button type="submit" class="btn btn-success">@formModeLabel</button>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-success">@formModeLabel</button>
+                <button class="btn btn-secondary" @onclick="CancelForm">Cancel</button>
+            </div>
         </EditForm>
     }
 }
@@ -111,10 +121,21 @@ else
     private UserManageModel? userModel;
     private UserEditModel editUser = new UserEditModel();
     private string formModeLabel => $"{editUser.CreateOrEdit} User"; 
+    private ConfirmActionModal? deleteModal;
+    private Guid userGuidToDelete;
 
     protected override async Task OnInitializedAsync()
     {
         userModel = await _userManageService.BuildModelAsync();
+    }
+
+    private async Task ShowConfirmModal(Guid userGuid)
+    {
+        userGuidToDelete = userGuid;
+        if (deleteModal is not null)
+        {
+            await deleteModal.ShowAsync(userGuid);
+        }
     }
 
     private void ShowAddForm()
@@ -136,9 +157,9 @@ else
         showForm = true;
     }
 
-    private async Task DeleteUser(Guid userGuid)
+    private async Task DeleteUser()
     {
-        await _userEditService.DeleteAsync(userGuid);
+        await _userEditService.DeleteAsync(userGuidToDelete);
         userModel = await _userManageService.BuildModelAsync();
     }
 

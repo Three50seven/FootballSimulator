@@ -1,0 +1,49 @@
+﻿@code {
+    [Parameter] public string Title { get; set; } = "Confirm Action";
+    [Parameter] public string Message { get; set; } = "Are you sure you want to continue?";
+    [Parameter] public EventCallback OnConfirm { get; set; }
+    [Parameter] public string ActionName { get; set; } = "Continue";
+
+    [Inject] IJSRuntime JS { get; set; } = default!;
+
+    private string ModalId => "confirmActionModal";
+    private bool _scriptLoaded;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_scriptLoaded)
+        {
+            await JS.InvokeVoidAsync("import", "./js/bootstrapInterop.js");
+            _scriptLoaded = true;
+        }
+    }
+
+    public async Task ShowAsync(Guid entityGuid)
+    {
+        await JS.InvokeVoidAsync("bootstrapInterop.showModal", $"#{ModalId}");
+    }
+
+    private async Task Confirm()
+    {
+        await OnConfirm.InvokeAsync();
+        await JS.InvokeVoidAsync("bootstrapInterop.hideModal", $"#{ModalId}");
+    }
+}
+
+<div class="modal fade" id="@ModalId" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                @Message
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" @onclick="Confirm">@ActionName</button>
+            </div>
+        </div>
+    </div>
+</div>
