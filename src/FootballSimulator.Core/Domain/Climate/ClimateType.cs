@@ -11,5 +11,7 @@ namespace FootballSimulator.Core.Domain
             Description = description;
         }
         public string? Description { get; private set; }
+        public IEnumerable<WeatherType> WeatherTypes { get; set; } = [];
+        public IEnumerable<ClimateTypeWeatherType> ClimateTypeWeatherTypes { get; set; } = [];
     }
 }

@@ -37,5 +37,6 @@ namespace FootballSimulator.Infrastructure.Data
         public virtual DbSet<ClimateType>? ClimateTypes { get; set; }
         public virtual DbSet<StadiumType>? StadiumTypes { get; set; }
         public virtual DbSet<WeatherType>? WeatherTypes { get; set; }
+        public virtual DbSet<Stadium>? Stadiums { get; set; }
     }
 }
