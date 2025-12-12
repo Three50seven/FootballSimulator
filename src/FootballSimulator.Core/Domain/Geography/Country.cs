@@ -1,14 +1,16 @@
-﻿namespace FootballSimulator.Core.Domain
+﻿using Common.Core.Domain;
+
+namespace FootballSimulator.Core.Domain
 {
-    public class Country : FSDataEntity
+    public class Country : LookupEntity
     {
-        protected Country() { }
+        private Country() { }
         public Country(string name, string code)
         {
             Name = name;
             Code = code;
         }
-        public string? Name { get; private set; }
         public string? Code { get; private set; }
+        public IEnumerable<State> States { get; private set; } = new List<State>();
     }
 }

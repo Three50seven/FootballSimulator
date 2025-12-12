@@ -23,8 +23,6 @@ namespace FootballSimulator.Infrastructure.Data
                 .ApplyConfigurationsFromAssembly<FootballSimulatorDbContext>();
         }
 
-
-        public virtual DbSet<ApplicationUser>? ApplicationUsers { get; set; }
         public new DbSet<User>? Users { get; set; }
         public new DbSet<Role>? Roles { get; set; }
         public new DbSet<UserRole>? UserRoles { get; set; }
@@ -33,5 +31,11 @@ namespace FootballSimulator.Infrastructure.Data
         public virtual DbSet<EntityType>? EntityTypes { get; set; }
         public virtual DbSet<EntityHistory>? EntityHistories { get; set; }
         public virtual DbSet<EntityHistoryChange>? EntityHistoryChanges { get; set; }
+        public virtual DbSet<City>? Cities { get; set; }
+        public virtual DbSet<Country>? Countries { get; set; }
+        public virtual DbSet<State>? States { get; set; }
+        public virtual DbSet<ClimateType>? ClimateTypes { get; set; }
+        public virtual DbSet<StadiumType>? StadiumTypes { get; set; }
+        public virtual DbSet<WeatherType>? WeatherTypes { get; set; }
     }
 }

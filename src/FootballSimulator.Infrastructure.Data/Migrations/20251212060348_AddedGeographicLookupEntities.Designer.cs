@@ -4,6 +4,7 @@ using FootballSimulator.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FootballSimulator.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(FootballSimulatorDbContext))]
-    partial class FootballSimulatorDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251212060348_AddedGeographicLookupEntities")]
+    partial class AddedGeographicLookupEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -125,30 +128,6 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
                     b.ToTable("cities");
                 });
 
-            modelBuilder.Entity("FootballSimulator.Core.Domain.ClimateType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("climate_types");
-                });
-
             modelBuilder.Entity("FootballSimulator.Core.Domain.Country", b =>
                 {
                     b.Property<int>("Id")
@@ -201,26 +180,6 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
                             Id = 2,
                             Name = "General User"
                         });
-                });
-
-            modelBuilder.Entity("FootballSimulator.Core.Domain.StadiumType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("stadium_types");
                 });
 
             modelBuilder.Entity("FootballSimulator.Core.Domain.State", b =>
@@ -335,26 +294,6 @@ namespace FootballSimulator.Infrastructure.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("user_roles");
-                });
-
-            modelBuilder.Entity("FootballSimulator.Core.Domain.WeatherType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("weather_types");
                 });
 
             modelBuilder.Entity("FootballSimulator.Infrastructure.Data.ApplicationUser", b =>
