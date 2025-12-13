@@ -2,7 +2,7 @@
 
 namespace FootballSimulator.Core.Domain
 {
-    public class Stadium : DomainEntity
+    public class Stadium : FSDataEntity, IArchivable
     {
         public Stadium(string name, int capacity, int cityId, int stadiumTypeId, int climateTypeId)
         {
@@ -24,5 +24,6 @@ namespace FootballSimulator.Core.Domain
         public bool IsInternationalMatchCandidate { get; private set; } = false;
         public DateTime BrokeGround { get; private set; }
         public DateTime? Opened { get; private set; }
+        public bool Archive { get; set; }
     }
 }
