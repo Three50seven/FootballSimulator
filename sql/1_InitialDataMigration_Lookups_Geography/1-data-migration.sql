@@ -144,9 +144,9 @@ BEGIN
 	BEGIN
 	PRINT N'Adding stadiums...'
 		INSERT INTO stadiums (name, capacity, city_id, stadium_type_id, climate_type_id, is_super_bowl_candidate, is_international_match_candidate, broke_ground, opened, archive, created_date, created_user_id, updated_date, updated_user_id)
-		SELECT 'Placeholder Stadium' as stadium_name, 50000 as capacity, (select ci.id from cities ci join states st on ci.state_id = st.id where ci.[name] = 'Honolulu' and st.abbreviation = 'HI') as city_id, (select st.id from stadium_types st where st.[name] = 'open-air') as stadium_type_id, (select ct.id from climate_types ct where ct.[name] = 'tropical') as climate_type_id, 1 as is_super_bowl_candidate, 0 as is_international_match_candidate, '1960-01-01 00:00:00.000' as broke_ground, '1965-09-12 00:00:00.000' as opened, 1 as archive, '2014-11-10 09:08:55.490' as created_date, 1 as created_user_id, getutcdate() as updated_date, 1 as updated_user_id UNION
+		SELECT 'Placeholder Stadium' as stadium_name, 50000 as capacity, (select ci.id from cities ci join states st on ci.state_id = st.id where ci.[name] = 'Honolulu' and st.abbreviation = 'HI') as city_id, (select st.id from stadium_types st where st.[name] = 'open-air') as stadium_type_id, (select ct.id from climate_types ct where ct.[name] = 'tropical') as climate_type_id, 1 as is_super_bowl_candidate, 0 as is_international_match_candidate, '1960-01-01 00:00:00.000' as broke_ground, '1965-09-12 00:00:00.000' as opened, 1 as archive, '2014-11-10 09:08:55.490' as created_date, 1 as created_user_id, getutcdate() as updated_date, 1 as updated_user_id
 		--COPY OTHER STATEMENTS GENERATED FROM BELOW QUERY
-		--LOOKUP QUERY FROM OLD DB:
+		/*-LOOKUP QUERY FROM OLD DB:
 		SELECT DISTINCT 'SELECT ''' + REPLACE(s.[stadium_name],'''', '''''') + ''' as stadium_name, ' + 
 			convert(nvarchar(10), s.max_capacity) + ' as capacity, (select ci.id from cities ci join states st on ci.state_id = st.id where ci.[name] = ''' + ci.[name] + ''' and st.abbreviation = ''' + states.abbreviation + ''') as city_id, 
 			(select st.id from stadium_types st where st.[name] = ''' + st.[name] + ''') as stadium_type_id, ' + 
@@ -164,6 +164,46 @@ BEGIN
 			JOIN FOOTBALL_SIM.dbo.stadium_types st on s.stadium_type_id = st.id
 			JOIN FOOTBALL_SIM.dbo.cities ci on s.city_id = ci.id
 			JOIN FOOTBALL_SIM.dbo.states on ci.state_id = states.id
+			*/
+	END
+	BEGIN
+	PRINT N'Adding conferences...'
+		INSERT INTO conferences (abbreviation,[name])
+		SELECT 'C1' AS [name],'Football Conference One' AS [name]
+		--COPY OTHER STATEMENTS GENERATED FROM BELOW QUERY
+		--LOOKUP QUERY FROM OLD DB:
+		--SELECT 'SELECT ''' + t.[conference] + ''' AS [name],''' + t.[description] + ''' AS [name] UNION', * FROM FOOTBALL_SIM.dbo.conferences t 
+	END
+	BEGIN
+	PRINT N'Adding divisions...'
+		INSERT INTO divisions ([name], conference_id)
+		SELECT 'Division 1' AS [name], (select id from conferences c where c.abbreviation = 'C1')
+		--COPY OTHER STATEMENTS GENERATED FROM BELOW QUERY
+		--LOOKUP QUERY FROM OLD DB:
+		--SELECT 'SELECT ''' + t.division + ''' AS [name], (select id from conferences c where c.abbreviation = ''' + c.conference + ''') UNION', * FROM FOOTBALL_SIM.dbo.divisions t join FOOTBALL_SIM.dbo.division_conference_rel dcr on t.id = dcr.division_id join FOOTBALL_SIM.dbo.conferences c on dcr.conference_id = c.id
+	END
+	BEGIN
+	PRINT N'Adding teams...'
+		INSERT INTO teams([name], mascot, founded_year, division_id, stadium_id, archive, created_date, created_user_id, updated_date, updated_user_id)
+		SELECT 'Team City Placeholder' as team_name, 'Placeholders' as mascot, 1960 as founded_year,(select d.id from divisions d join conferences c on d.conference_id = c.id where d.[name] = 'Division 1' and c.[abbreviation] = 'C1') as division_id, (select st.id from stadiums st where st.[name] = 'Placeholder Stadium') as stadium_id, 0 as archive, '2010-11-07 00:47:24.000' as created_date, 1 as created_user_id, getutcdate() as updated_date, 1 as updated_user_id
+		--COPY OTHER STATEMENTS GENERATED FROM BELOW QUERY
+		--LOOKUP QUERY FROM OLD DB:
+		/*-LOOKUP QUERY FROM OLD DB:
+		SELECT DISTINCT 'SELECT ''' + REPLACE(t.team_name,'''', '''''') + ''' as team_name, ' + 
+			'''' + REPLACE(t.mascot,'''', '''''') + ''' as mascot, ' + 
+			convert(nvarchar(10), t.first_season_year) + ' as founded_year,' +  
+			'(select d.id from divisions d join conferences c on d.conference_id = c.id where d.[name] = ''' + d.division + ''' and c.[abbreviation] = ''' + c.conference + ''') as division_id, ' + 
+			'(select st.id from stadiums st where st.[name] = ''' + + REPLACE(st.stadium_name,'''', '''''') + + ''') as stadium_id, ' + 
+			convert(nvarchar(1),case when t.active = 1 then 0 else 1 end) + ' as archive, ' +
+			'''' + convert(varchar(23), t.date_created, 121) + ''' as created_date, 1 as created_user_id, getutcdate() as updated_date, 1 as updated_user_id ' +
+			'UNION'
+			,t.*, d.division, c.conference, st.stadium_name
+		FROM FOOTBALL_SIM.dbo.teams t
+			JOIN FOOTBALL_SIM.dbo.division_conference_rel dcr on t.division_conf_rel = dcr.id
+			JOIN FOOTBALL_SIM.dbo.divisions d on dcr.division_id = d.id
+			JOIN FOOTBALL_SIM.dbo.conferences c on dcr.conference_id = c.id
+			JOIN FOOTBALL_SIM.dbo.stadiums st on t.home_stadium_rel = st.id
+		*/
 	END
 END
 ELSE
