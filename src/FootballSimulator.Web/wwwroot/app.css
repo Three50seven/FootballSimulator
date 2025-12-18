@@ -65,3 +65,18 @@ h1:focus {
         color: var(--bs-secondary-color); /* keep text dimmed */
     }
 }
+
+@media (max-width: 768px) {
+    td {
+        display: block;
+        width: 100%;
+    }
+
+        td::before {
+            content: attr(data-label);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.25rem;
+            color: #6c757d; /* Bootstrap muted text */
+        }
+}

@@ -17,38 +17,38 @@ else
         <div class="d-flex justify-content-end p-3">
             <button class="btn btn-primary" @onclick="ShowAddForm">+ Add New</button>
         </div>
-        <ul>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <strong>Name</strong>
-                    <span class="text-muted">- UserName (Email)</span>
-                </div>
-                <div class="btn-group align-content-center">
-                    Manage
-                </div>
-            </li>
-            <li class="list-group-item">
-                <hr />
-            </li>
-            @foreach (var user in manageModel.Results)
-            {
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>@user.FirstName @user.LastName</strong>
-                        <span class="text-muted">- @user.UserName (@user.Email)</span>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-sm btn-secondary me-1" @onclick="() => ShowEditForm(user.Guid)">
-                            Edit
-                        </button>
-                        <button class="btn btn-sm btn-danger"
-                                @onclick="() => ShowConfirmModal(user.Guid)">
-                            Delete
-                        </button>
-                    </div>
-                </li>
-            }
-        </ul>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-light d-none d-md-table-header-group">
+                    <tr>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th class="text-end">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in manageModel.Results)
+                    {
+                        <tr class="d-block d-md-table-row mb-3 mb-md-0">
+                            <td data-label="Name"><strong>@item.FirstName @item.LastName</strong></td>
+                            <td data-label="Username">@item.UserName</td>
+                            <td data-label="Email">@item.Email</td>
+                            <td data-label="Manage" class="text-end">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-secondary me-1" @onclick="() => ShowEditForm(item.Guid)">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" @onclick="() => ShowConfirmModal(item.Guid)">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
         <ConfirmActionModal @ref="deleteModal"
                     Title="Delete User"
                     Message="Are you sure you want to delete this user?"
@@ -58,6 +58,7 @@ else
     }
     else
     {
+        <h4>@formModeLabel</h4>
         <EditForm Model="@editModel" OnValidSubmit="SaveUser" OnInvalidSubmit="HandleInvalidUser">
             <DataAnnotationsValidator />
             <ValidationSummary />
