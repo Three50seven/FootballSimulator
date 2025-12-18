@@ -49,7 +49,7 @@ namespace FootballSimulator.Application.Services
                 var entity = await _userRepository.GetByGuidAsync(guid);
 
                 if (entity == null)
-                    throw new DataObjectNotFoundException(nameof(User), guid);
+                    throw new DataObjectNotFoundException(nameof(Core.Domain.User), guid);
 
                 await DeleteAsync(entity);
 

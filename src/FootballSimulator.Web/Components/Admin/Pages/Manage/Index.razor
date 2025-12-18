@@ -6,7 +6,7 @@
 <PageTitle>Manage Users</PageTitle>
 
 <h3>Manage Users</h3>
-@if (userModel is null)
+@if (manageModel is null)
 {
     <p><em>Loading users...</em></p>
 }
@@ -30,7 +30,7 @@ else
             <li class="list-group-item">
                 <hr />
             </li>
-            @foreach (var user in userModel.Results)
+            @foreach (var user in manageModel.Results)
             {
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
@@ -58,52 +58,52 @@ else
     }
     else
     {
-        <EditForm Model="@editUser" OnValidSubmit="SaveUser" OnInvalidSubmit="HandleInvalidUser">
+        <EditForm Model="@editModel" OnValidSubmit="SaveUser" OnInvalidSubmit="HandleInvalidUser">
             <DataAnnotationsValidator />
             <ValidationSummary />
                     
             <div class="mb-3">
                 <label>User Name</label>
-                @if (editUser.IsNew)
+                @if (editModel.IsNew)
                 {
-                    <InputText @bind-Value="editUser.UserName" class="form-control" />
-                    <ValidationMessage For="@(() => editUser.UserName)" />
+                    <InputText @bind-Value="editModel.UserName" class="form-control" />
+                    <ValidationMessage For="@(() => editModel.UserName)" />
                 }
                 else
                 {
-                    <input value="@editUser.UserName" class="form-control input-disabled" readonly />
+                    <input value="@editModel.UserName" class="form-control input-disabled" readonly />
                 }
             </div>
 
             <div class="mb-3">
                 <label>Application User ID</label>
-                @if (editUser.IsNew)
+                @if (editModel.IsNew)
                 {
-                    <InputText @bind-Value="editUser.ApplicationUserId" class="form-control" />
-                    <ValidationMessage For="@(() => editUser.ApplicationUserId)" />
+                    <InputText @bind-Value="editModel.ApplicationUserId" class="form-control" />
+                    <ValidationMessage For="@(() => editModel.ApplicationUserId)" />
                 }
                 else
                 {
-                    <input value="@editUser.ApplicationUserId" class="form-control input-disabled" readonly />
+                    <input value="@editModel.ApplicationUserId" class="form-control input-disabled" readonly />
                 }
             </div>
 
             <div class="mb-3">
                 <label>First Name</label>
-                <InputText @bind-Value="editUser.FirstName" class="form-control" />
-                <ValidationMessage For="@(() => editUser.FirstName)" />
+                <InputText @bind-Value="editModel.FirstName" class="form-control" />
+                <ValidationMessage For="@(() => editModel.FirstName)" />
             </div>
 
             <div class="mb-3">
                 <label>Last Name</label>
-                <InputText @bind-Value="editUser.LastName" class="form-control" />
-                <ValidationMessage For="@(() => editUser.LastName)" />
+                <InputText @bind-Value="editModel.LastName" class="form-control" />
+                <ValidationMessage For="@(() => editModel.LastName)" />
             </div>
 
             <div class="mb-3">
                 <label>Email</label>
-                <InputText @bind-Value="editUser.Email" class="form-control" />
-                <ValidationMessage For="@(() => editUser.Email)" />
+                <InputText @bind-Value="editModel.Email" class="form-control" />
+                <ValidationMessage For="@(() => editModel.Email)" />
             </div>
 
             <div class="btn-group">
@@ -118,15 +118,15 @@ else
     [Inject] private IUserManageModelService _userManageService { get; set; } = default!;
     [Inject] private IUserEditService _userEditService { get; set; } = default!;
     private bool showForm = false;
-    private UserManageModel? userModel;
-    private UserEditModel editUser = new UserEditModel();
-    private string formModeLabel => $"{editUser.CreateOrEdit} User"; 
+    private UserManageModel? manageModel;
+    private UserEditModel editModel = new UserEditModel();
+    private string formModeLabel => $"{editModel.CreateOrEdit} User"; 
     private ConfirmActionModal? deleteModal;
     private Guid userGuidToDelete;
 
     protected override async Task OnInitializedAsync()
     {
-        userModel = await _userManageService.BuildModelAsync();
+        manageModel = await _userManageService.BuildModelAsync();
     }
 
     private async Task ShowConfirmModal(Guid userGuid)
@@ -140,7 +140,7 @@ else
 
     private void ShowAddForm()
     {
-        editUser = new UserEditModel();
+        editModel = new UserEditModel();
         showForm = true;
     }
 
@@ -153,14 +153,14 @@ else
         {
             return;
         }
-        editUser = userEditModel;
+        editModel = userEditModel;
         showForm = true;
     }
 
     private async Task DeleteUser()
     {
         await _userEditService.DeleteAsync(userGuidToDelete);
-        userModel = await _userManageService.BuildModelAsync();
+        manageModel = await _userManageService.BuildModelAsync();
     }
 
     private void CancelForm()
@@ -170,8 +170,8 @@ else
 
     private async Task SaveUser()
     {
-        await _userEditService.SaveAsync(editUser);
-        userModel = await _userManageService.BuildModelAsync();
+        await _userEditService.SaveAsync(editModel);
+        manageModel = await _userManageService.BuildModelAsync();
         showForm = false;
     }
 
