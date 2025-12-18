@@ -1,7 +1,153 @@
 ﻿@page "/admin/manage/stadiums"
-@inject IStadiumEditService stadiumEditService
+@using FootballSimulator.Core.Interfaces
+@using Microsoft.AspNetCore.Components.Forms
+@rendermode InteractiveServer
 
 <PageTitle>Manage Stadiums</PageTitle>
 
 <h3>Manage stadiums</h3>
-<p>Stadium Editor coming soon!</p>
+@if (manageModel is null)
+{
+    <p><em>Loading stadiums...</em></p>
+}
+else
+{
+    @if (!showForm)
+    {
+        <div class="d-flex justify-content-end p-3">
+            <button class="btn btn-primary" @onclick="ShowAddForm">+ Add New</button>
+        </div>
+        <ul>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>Name</strong>
+                    <span class="text-muted">- (Stadium Type, Capacity) - City</span>
+                </div>
+                <div class="btn-group align-content-center">
+                    Manage
+                </div>
+            </li>
+            <li class="list-group-item">
+                <hr />
+            </li>
+            @foreach (var item in manageModel.Results)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>@item.Name</strong>
+                        <span class="text-muted">- (@item.StadiumTypeName, @item.Capacity, @item.CityName)</span>
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-secondary me-1" @onclick="() => ShowEditForm(item.Guid)">
+                            Edit
+                        </button>
+                        <button class="btn btn-sm btn-danger"
+                                @onclick="() => ShowConfirmModal(item.Guid)">
+                            Delete
+                        </button>
+                    </div>
+                </li>
+            }
+        </ul>
+        <ConfirmActionModal @ref="deleteModal"
+                            Title="Delete Stadium"
+                            Message="Are you sure you want to delete this stadium?"
+                            ActionName="Delete"
+                            OnConfirm="DeleteStadium" />
+
+    }
+    else
+    {
+        <p>Edit Form - coming soon!</p>
+        @* <EditForm Model="@editModel" OnValidSubmit="SaveStadium" OnInvalidSubmit="HandleInvalidEntity">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>Stadium Name</label>
+                @if (editModel.IsNew)
+                {
+                    <InputText @bind-Value="editModel.Name" class="form-control" />
+                    <ValidationMessage For="@(() => editModel.Name)" />
+                }
+                else
+                {
+                    <input value="@editModel.Name" class="form-control input-disabled" readonly />
+                }
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-success">@formModeLabel</button>
+                <button class="btn btn-secondary" @onclick="CancelForm">Cancel</button>
+            </div>
+        </EditForm> *@
+    }
+}
+
+@code {
+    [Inject] private IStadiumManageModelService _stadiumManageService { get; set; } = default!;
+    [Inject] private IStadiumEditService _stadiumEditService { get; set; } = default!;
+    private bool showForm = false;
+    private StadiumManageModel? manageModel;
+    private StadiumEditModel editModel = new StadiumEditModel();
+    private string formModeLabel => $"{editModel.CreateOrEdit} Stadium";
+    private ConfirmActionModal? deleteModal;
+    private Guid stadiumGuidToDelete;
+
+    protected override async Task OnInitializedAsync()
+    {
+        manageModel = await _stadiumManageService.BuildModelAsync();
+    }
+
+    private async Task ShowConfirmModal(Guid stadiumGuid)
+    {
+        stadiumGuidToDelete = stadiumGuid;
+        if (deleteModal is not null)
+        {
+            await deleteModal.ShowAsync(stadiumGuid);
+        }
+    }
+
+    private void ShowAddForm()
+    {
+        editModel = new StadiumEditModel();
+        showForm = true;
+    }
+
+
+    private async Task ShowEditForm(Guid stadiumGuid)
+    {
+        StadiumEditModel? stadiumEditModel = await _stadiumEditService.BuildModel(stadiumGuid);
+
+        if (stadiumEditModel is null)
+        {
+            return;
+        }
+        editModel = stadiumEditModel;
+        showForm = true;
+    }
+
+    private async Task DeleteStadium()
+    {
+        await _stadiumEditService.DeleteAsync(stadiumGuidToDelete);
+        manageModel = await _stadiumManageService.BuildModelAsync();
+    }
+
+    private void CancelForm()
+    {
+        showForm = false;
+    }
+
+    private async Task SaveStadium()
+    {
+        await _stadiumEditService.SaveAsync(editModel);
+        manageModel = await _stadiumManageService.BuildModelAsync();
+        showForm = false;
+    }
+
+    private void HandleInvalidEntity()
+    {
+        Console.WriteLine("Validation failed. Stadium not saved.");
+    }
+
+}
