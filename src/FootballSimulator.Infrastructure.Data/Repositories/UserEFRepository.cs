@@ -12,19 +12,19 @@ namespace FootballSimulator.Infrastructure.Data
         {
         }
 
-        protected override IQueryable<User> EntitySet => base.EntitySet
+        protected override IQueryable<User> FullEntitySet => base.FullEntitySet
                                                             .Include(u => u.UserRoles)
                                                                 .ThenInclude(ur => ur.Role)
                                                             .Where(u => u.Id != User.SystemUserId); //exclude system user from all user queries - note, this also prevents anyone from logging in as the system user
 
         public bool CheckForExistingEmail(string? email, int? id)
         {
-            return EntitySet.Where(u => u.Id != id).Any(u => string.Equals(u.Email, email));
+            return FullEntitySet.Where(u => u.Id != id).Any(u => string.Equals(u.Email, email));
         }
 
         public bool CheckForExistingUserName(string? userName, int? id)
         {
-            return EntitySet.Where(u => u.Id != id).Any(u => string.Equals(u.UserName, userName));
+            return FullEntitySet.Where(u => u.Id != id).Any(u => string.Equals(u.UserName, userName));
         }
 
         public async Task<User?> GetByApplicationIdentityAsync(string userNameOrApplicationUserId, CancellationToken cancellationToken = default, bool includeArchived = false)
@@ -34,7 +34,7 @@ namespace FootballSimulator.Infrastructure.Data
                             .ThenInclude(ur => ur.Role)
                             .FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserId, userNameOrApplicationUserId));
             else
-                return await EntitySet.FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserId, userNameOrApplicationUserId));
+                return await FullEntitySet.FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserId, userNameOrApplicationUserId));
         }
     }
 }

@@ -2,10 +2,6 @@
 using Common.Core;
 using Common.Core.Domain;
 using Common.Core.Validation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Common.EntityFrameworkCore
 {
@@ -54,7 +50,7 @@ namespace Common.EntityFrameworkCore
         where TContextType : DbContext
         where TType : class, IEntity<TKey>
         where TIncludes : struct, Enum
-    {        
+    {
         protected EFRepositoryBase(TContextType context)
         {
             Guard.IsNotNull(context, nameof(context));
@@ -74,12 +70,12 @@ namespace Common.EntityFrameworkCore
 
         public virtual TType GetById(TKey id, TIncludes includes = default)
         {
-            return GetEntitySet(includes).FirstOrDefault(DbSetExtensions.IdEqualsPredicate<TType, TKey>(id))!;
+            return GetEntitySet(includes).FirstOrDefault(DbSetExtensions.IdEqualsPredicate<TType, TKey>(id));
         }
 
         public virtual Task<TType> GetByIdAsync(TKey id, TIncludes includes = default)
         {
-            return GetEntitySet(includes).FirstOrDefaultAsync(DbSetExtensions.IdEqualsPredicate<TType, TKey>(id))!;
+            return GetEntitySet(includes).FirstOrDefaultAsync(DbSetExtensions.IdEqualsPredicate<TType, TKey>(id));
         }
 
         public virtual IEnumerable<TType> GetAll(TIncludes includes = default)
@@ -95,7 +91,7 @@ namespace Common.EntityFrameworkCore
         public virtual IEnumerable<TType> GetAll(IEnumerable<TKey> ids, TIncludes includes = default)
         {
             if (ids == null || !ids.Any())
-                return null!;
+                return null;
 
             return GetEntitySet(includes).Where(x => ids.Contains(x.Id)).ToList();
         }
@@ -103,7 +99,7 @@ namespace Common.EntityFrameworkCore
         public virtual async Task<IEnumerable<TType>> GetAllAsync(IEnumerable<TKey> ids, TIncludes includes = default)
         {
             if (ids == null || !ids.Any())
-                return null!;
+                return null;
 
             return await GetEntitySet(includes).Where(x => ids.Contains(x.Id)).ToListAsync();
         }

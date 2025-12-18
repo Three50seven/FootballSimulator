@@ -20,8 +20,8 @@ namespace Common.EntityFrameworkCore
         {
             return includes switch
             {
-                RepositoryIncludesDefaultOption.All => base.EntitySet.IncludeAllRelations(),
-                RepositoryIncludesDefaultOption.None => base.EntitySet,
+                RepositoryIncludesDefaultOption.All => base.FullEntitySet.IncludeAllRelations(),
+                RepositoryIncludesDefaultOption.None => base.FullEntitySet,
                 _ => throw new UnsupportedEnumException(nameof(includes)),
             };
         }

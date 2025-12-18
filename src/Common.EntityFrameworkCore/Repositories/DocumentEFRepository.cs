@@ -8,12 +8,12 @@ namespace Common.EntityFrameworkCore
     public class DocumentEFRepository<TContext> : EFDomainRepositoryBase<TContext, Document>
         where TContext : DbContext
     {
-        public DocumentEFRepository(TContext context) 
+        public DocumentEFRepository(TContext context)
             : base(context)
         {
         }
 
-        public DocumentEFRepository(TContext context, IEntityHistoryStore historyStore) 
+        public DocumentEFRepository(TContext context, IEntityHistoryStore historyStore)
             : base(context, historyStore)
         {
         }

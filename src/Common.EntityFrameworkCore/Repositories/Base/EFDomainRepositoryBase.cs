@@ -1,12 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Common.Core;
+﻿using Common.Core;
 using Common.Core.Domain;
 using Common.Core.Validation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Common.EntityFrameworkCore
 {
@@ -21,12 +17,12 @@ namespace Common.EntityFrameworkCore
         where TContextType : DbContext
         where TType : class, IDomainEntity, IHistoricalEntity
     {
-        protected EFDomainRepositoryBase(TContextType context) 
+        protected EFDomainRepositoryBase(TContextType context)
             : base(context)
         {
         }
 
-        protected EFDomainRepositoryBase(TContextType context, IEntityHistoryStore historyStore) 
+        protected EFDomainRepositoryBase(TContextType context, IEntityHistoryStore historyStore)
             : base(context, historyStore)
         {
         }
@@ -151,7 +147,7 @@ from the constructor on {GetType().FullName}.");
             {
                 entry = DbSet.Remove(item);
             }
-         
+
             if (recordChangeEvent ?? true)
                 ProcessCommandHistory(item, entry, CommandTypeOption.Deleted, userId);
         }
@@ -258,10 +254,10 @@ from the constructor on {GetType().FullName}.");
         }
 
         protected virtual HistoryCommandContext BuildHistoryContext(
-            TType item, 
+            TType item,
             EntityEntry entry,
             StoreHistoryAttribute storeHistoryAttribute,
-            CommandTypeOption commandType, 
+            CommandTypeOption commandType,
             int userId)
         {
             if (storeHistoryAttribute == null)
@@ -276,11 +272,11 @@ from the constructor on {GetType().FullName}.");
             }
 
             return new HistoryCommandContext(
-                storeHistoryAttribute.EntityTypeId, 
-                item, 
-                commandType, 
-                userId, 
-                changes, 
+                storeHistoryAttribute.EntityTypeId,
+                item,
+                commandType,
+                userId,
+                changes,
                 storeHistoryAttribute.RecordAllEvents);
         }
 

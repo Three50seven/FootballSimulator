@@ -21,4 +21,11 @@ namespace FootballSimulator.Core
         Test = 4,
         Production = 5
     }
+    public enum StadiumQueryIncludeOption
+    {
+        All = 0,
+        None = 1,
+        Team = 2,
+        Geography = 3
+    }
 }

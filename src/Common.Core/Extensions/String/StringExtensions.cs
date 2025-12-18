@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Common.Core
@@ -43,9 +39,9 @@ namespace Common.Core
         /// <param name="text"></param>
         /// <param name="lower">Whether resulting words in list should be lowered.</param>
         /// <returns></returns>
-        public static IEnumerable<string> GetWords(this string text, bool lower = false)
+        public static IEnumerable<string> GetWords(this string? text, bool lower = false)
         {
-            text = text.SetEmptyToNull();
+            text = text?.SetEmptyToNull();
             if (string.IsNullOrWhiteSpace(text))
                 return new string[] { };
             return (lower ? text.ToLower() : text).Split(' ');
@@ -57,7 +53,7 @@ namespace Common.Core
         /// <param name="value"></param>
         /// <param name="trim">Whether result should be trimmed. Defaults to true.</param>
         /// <returns></returns>
-        public static string SetEmptyToNull(this string value, bool trim = true)
+        public static string? SetEmptyToNull(this string value, bool trim = true)
         {
             if (string.IsNullOrWhiteSpace(value))
                 return null;
@@ -212,7 +208,7 @@ namespace Common.Core
         /// <param name="suffixToRemove">Suffix that should be removed from end of input string if present.</param>
         /// <param name="comparisonType">String comparison.</param>
         /// <returns></returns>
-        public static string TrimEnd(
+        public static string? TrimEnd(
             this string input, 
             string suffixToRemove, 
             StringComparison comparisonType = StringComparison.InvariantCultureIgnoreCase)
@@ -425,7 +421,7 @@ namespace Common.Core
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static string ReplaceMultiSpacesWithSingleSpace(this string value)
+        public static string? ReplaceMultiSpacesWithSingleSpace(this string value)
         {
             if (value == null)
                 return null;
@@ -458,7 +454,7 @@ namespace Common.Core
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static string ReplaceSpecialQuotes(this string value)
+        public static string? ReplaceSpecialQuotes(this string value)
         {
             return value?.Replace("‘", "'")
                          .Replace("’", "'")

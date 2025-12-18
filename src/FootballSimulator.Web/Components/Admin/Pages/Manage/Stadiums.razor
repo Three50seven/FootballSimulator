@@ -1,4 +1,5 @@
 ﻿@page "/admin/manage/stadiums"
+@using FootballSimulator.Core.DTOs
 @using FootballSimulator.Core.Interfaces
 @using Microsoft.AspNetCore.Components.Forms
 @rendermode InteractiveServer
@@ -14,6 +15,37 @@ else
 {
     @if (!showForm)
     {
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <input class="form-control" placeholder="Name"
+                               @bind="manageModel.Filter.Name" />
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" type="number" placeholder="Min Capacity"
+                               @bind="manageModel.Filter.MinCapacity" />
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" type="number" placeholder="Max Capacity"
+                               @bind="manageModel.Filter.MaxCapacity" />
+                    </div>
+                    <div class="col-md-2">
+                        <input class="form-control" placeholder="City"
+                               @bind="manageModel.Filter.CityName" />
+                    </div>
+                    <div class="col-md-3">
+                        <input class="form-control" placeholder="Type"
+                               @bind="manageModel.Filter.TypeName" />
+                    </div>
+                </div>
+                <div class="mt-3">
+                    <button class="btn btn-primary me-2" @onclick="SearchStadiums">Search</button>
+                    <button class="btn btn-secondary" @onclick="ResetFilters">Reset</button>
+                </div>
+            </div>
+        </div>
+
         <div class="d-flex justify-content-end p-3">
             <button class="btn btn-primary" @onclick="ShowAddForm">+ Add New</button>
         </div>
@@ -83,15 +115,17 @@ else
     [Inject] private IStadiumManageModelService _stadiumManageService { get; set; } = default!;
     [Inject] private IStadiumEditService _stadiumEditService { get; set; } = default!;
     private bool showForm = false;
-    private StadiumManageModel? manageModel;
+    private StadiumManageModel? manageModel = new StadiumManageModel();
     private StadiumEditModel editModel = new StadiumEditModel();
     private string formModeLabel => $"{editModel.CreateOrEdit} Stadium";
     private ConfirmActionModal? deleteModal;
     private Guid stadiumGuidToDelete;
+    private SearchQueryModel<StadiumSearchFilter>? searchQueryModel = new SearchQueryModel<StadiumSearchFilter>();    
 
     protected override async Task OnInitializedAsync()
     {
         manageModel = await _stadiumManageService.BuildModelAsync();
+        await SearchStadiums();
     }
 
     private async Task ShowConfirmModal(Guid stadiumGuid)
@@ -112,7 +146,7 @@ else
 
     private async Task ShowEditForm(Guid stadiumGuid)
     {
-        StadiumEditModel? stadiumEditModel = await _stadiumEditService.BuildModel(stadiumGuid);
+        var stadiumEditModel = await _stadiumEditService.BuildModel(stadiumGuid);
 
         if (stadiumEditModel is null)
         {
@@ -143,6 +177,42 @@ else
     private void HandleInvalidEntity()
     {
         Console.WriteLine("Validation failed. Stadium not saved.");
+    }
+
+    private async Task SearchStadiums()
+    {
+        if (manageModel is null || searchQueryModel is null) return;
+
+        searchQueryModel.Filter = manageModel.Filter;
+        searchQueryModel.ResultFilter = new ResultListFilterModel()
+            {
+                CurrentPage = manageModel.Paging.Paging.Current,
+                PageSize = manageModel.Paging.Paging.Size,
+                SortProperty = manageModel.Sorting.SortBy,
+                SortDirection = manageModel.Sorting.DirectionAbbr
+            };
+
+        var result = await _stadiumManageService.SearchAsync(searchQueryModel);
+        manageModel.Results = result.Results;
+    }
+
+    private async Task ResetFilters()
+    {
+        if (manageModel is null || searchQueryModel is null)
+        {
+            return;
+        }
+        manageModel.Filter?.Clean();
+        searchQueryModel.ResultFilter = new ResultListFilterModel()
+        {
+            CurrentPage = manageModel.Paging.Paging.Current,
+            PageSize = manageModel.Paging.Paging.Size,
+            SortProperty = manageModel.Sorting.SortBy,
+            SortDirection = manageModel.Sorting.DirectionAbbr
+        };
+
+        var result = await _stadiumManageService.SearchAsync(searchQueryModel);
+        manageModel.Results = result.Results;
     }
 
 }

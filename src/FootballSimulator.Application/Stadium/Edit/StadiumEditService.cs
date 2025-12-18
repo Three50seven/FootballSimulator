@@ -2,12 +2,13 @@
 using Common.Core.Domain;
 using Common.Core.Validation;
 using FootballSimulator.Application.Models;
+using FootballSimulator.Core;
 using FootballSimulator.Core.Domain;
 using FootballSimulator.Core.Interfaces;
 
 namespace FootballSimulator.Application.Services
 {
-    public class StadiumEditService : EditServiceBase<Stadium, IStadiumRepository>, IStadiumEditService
+    public class StadiumEditService : EditServiceBase<Stadium, IStadiumRepository, StadiumQueryIncludeOption>, IStadiumEditService
     {
         private readonly IStadiumRepository _stadiumRepository;
         private readonly IValidator<StadiumEditModel> _validator;
