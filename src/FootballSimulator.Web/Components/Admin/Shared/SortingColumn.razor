@@ -1,0 +1,27 @@
+﻿<th class="sortable @SortCss"
+    @onclick="OnClick">
+    @Text
+</th>
+
+@code {
+    [Parameter] public string Text { get; set; } = "";
+    [Parameter] public string Column { get; set; } = "";
+    [Parameter] public string SortBy { get; set; } = "";
+    [Parameter] public string Direction { get; set; } = "asc";
+    [Parameter] public EventCallback<(string SortBy, string Direction)> OnSort { get; set; }
+
+    private bool IsCurrentSort => SortBy == Column;
+
+    private string SortCss =>
+        IsCurrentSort ? (Direction == "asc" ? "ascending" : "descending") : "";
+
+    private async Task OnClick()
+    {
+        string newDirection = Direction;
+
+        if (IsCurrentSort)
+            newDirection = Direction == "asc" ? "desc" : "asc";
+
+        await OnSort.InvokeAsync((Column, newDirection));
+    }
+}
