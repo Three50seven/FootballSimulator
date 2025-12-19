@@ -1,0 +1,96 @@
+﻿@using Common.Core.Domain
+<div class="pagination">
+
+    <span>@TotalCount Results</span>
+
+    @if (TotalPages > 1)
+    {
+        <div class="select">
+            <select @onchange="OnPageSelect">
+                @foreach (var p in AllPages)
+                {
+                    <option value="@p" @attributes="GetSelected(p)">
+                        @p
+                    </option>
+                }
+            </select>
+        </div>
+    }
+
+    <div class="button--group">
+
+        @if (CurrentPage > 1)
+        {
+            <button class="pagination--prev" @onclick="() => ChangePage(CurrentPage - 1)">
+                <span class="hidden">Previous Page</span>
+            </button>
+
+            @if (!MinPageVisible)
+            {
+                <button @onclick="() => ChangePage(1)">1</button>
+                <button class="inactive">…</button>
+            }
+        }
+
+        @foreach (var p in VisiblePages)
+        {
+            <button class="@(p == CurrentPage ? "pagination--active" : "")"
+                    @onclick="() => ChangePage(p)">
+                @p
+            </button>
+        }
+
+        @if (CurrentPage < TotalPages)
+        {
+            @if (!MaxPageVisible)
+            {
+                <button class="inactive">…</button>
+                <button @onclick="() => ChangePage(TotalPages)">@TotalPages</button>
+            }
+
+            <button class="pagination--next" @onclick="() => ChangePage(CurrentPage + 1)">
+                <span class="hidden">Next Page</span>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public int CurrentPage { get; set; }
+    [Parameter] public int PageSize { get; set; }
+    [Parameter] public int TotalCount { get; set; }
+    [Parameter] public EventCallback<Page> OnPageChanged { get; set; }
+
+    public Page CurrentPaging { get; set; } = new();
+    
+    private Dictionary<string, object>? GetSelected(int p)
+        => p == CurrentPage
+            ? new() { { "selected", true } }
+            : null;
+
+    private int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
+
+    private IEnumerable<int> AllPages => Enumerable.Range(1, TotalPages);
+
+    private IEnumerable<int> VisiblePages =>
+        AllPages.Skip(Math.Max(0, CurrentPage - 3))
+                .Take(5);
+
+    private bool MinPageVisible => VisiblePages.Contains(1);
+    private bool MaxPageVisible => VisiblePages.Contains(TotalPages);
+
+    private async Task ChangePage(int page)
+    {
+        if (page < 1 || page > TotalPages)
+            return;
+
+        CurrentPaging.Number = page;
+        await OnPageChanged.InvokeAsync(CurrentPaging);
+    }
+
+    private async Task OnPageSelect(ChangeEventArgs e)
+    {
+        int page = int.Parse(e.Value!.ToString()!);
+        await ChangePage(page);
+    }
+}
