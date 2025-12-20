@@ -22,7 +22,7 @@
         @if (CurrentPage > 1)
         {
             <button class="pagination--prev" @onclick="() => ChangePage(CurrentPage - 1)">
-                <span class="hidden">Previous Page</span>
+                <span class="hidden">&lt</span>
             </button>
 
             @if (!MinPageVisible)
@@ -49,7 +49,7 @@
             }
 
             <button class="pagination--next" @onclick="() => ChangePage(CurrentPage + 1)">
-                <span class="hidden">Next Page</span>
+                <span class="hidden">&gt</span>
             </button>
         }
     </div>

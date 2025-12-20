@@ -8,6 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\sass\**" />
+    <Content Remove="wwwroot\sass\**" />
+    <EmbeddedResource Remove="wwwroot\sass\**" />
+    <None Remove="wwwroot\sass\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Admin\Shared\Paging.razor.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.21" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.22">
       <PrivateAssets>all</PrivateAssets>
@@ -16,18 +27,24 @@
     <PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="2.0.7" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="6.1.0" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <ProjectReference Include="..\Common.AspNetCore\Common.AspNetCore.csproj" />
-    <ProjectReference Include="..\Common.Cache\Common.Cache.csproj" />
-    <ProjectReference Include="..\Common.Configuration\Common.Configuration.csproj" />
-    <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
-    <ProjectReference Include="..\Common.EntityFrameworkCore\Common.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\Common.Logging\Common.Logging.NLog.csproj" />
-    <ProjectReference Include="..\Common.Serialization.SystemTextJson\Common.Serialization.SystemTextJson.csproj" />
-    <ProjectReference Include="..\FootballSimulator.Application\FootballSimulator.Application.csproj" />
-    <ProjectReference Include="..\FootballSimulator.Core\FootballSimulator.Core.csproj" />
-    <ProjectReference Include="..\FootballSimulator.Infrastructure.Data\FootballSimulator.Infrastructure.Data.csproj" />
+    <None Include="package.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vite.config.js" />
   </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Common.AspNetCore\Common.AspNetCore.csproj" />
+        <ProjectReference Include="..\Common.Cache\Common.Cache.csproj" />
+        <ProjectReference Include="..\Common.Configuration\Common.Configuration.csproj" />
+        <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
+        <ProjectReference Include="..\Common.EntityFrameworkCore\Common.EntityFrameworkCore.csproj" />
+        <ProjectReference Include="..\Common.Logging\Common.Logging.NLog.csproj" />
+        <ProjectReference Include="..\Common.Serialization.SystemTextJson\Common.Serialization.SystemTextJson.csproj" />
+        <ProjectReference Include="..\FootballSimulator.Application\FootballSimulator.Application.csproj" />
+        <ProjectReference Include="..\FootballSimulator.Core\FootballSimulator.Core.csproj" />
+        <ProjectReference Include="..\FootballSimulator.Infrastructure.Data\FootballSimulator.Infrastructure.Data.csproj" />
+    </ItemGroup>
 </Project>

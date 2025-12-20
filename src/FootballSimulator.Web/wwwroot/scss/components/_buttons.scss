@@ -1,0 +1,103 @@
+﻿@use "abstracts/breakpoints" as bp;
+@use "abstracts/mixins" as mix;
+
+// Transitions
+%transition {
+    transition: 400ms all cubic-bezier(.25,1,.5,1) !important;
+}
+
+// Mixins
+@mixin button-hover( $btn-bg: var(--btn-bg), $btn-border: var(--btn-border), $btn-text: var(--btn-text), $btn-svg: var(--btn-svg) ) {
+    @include bp.bp(tablet) {
+        &:hover {
+            background-color: $btn-bg;
+            border-color: $btn-border;
+            color: $btn-text;
+
+            path, polygon {
+                fill: $btn-svg;
+            }
+        }
+    }
+}
+
+@mixin button( $btn-bg: var(--btn-bg), $btn-border: var(--btn-border), $btn-text: var(--btn-text), $btn-svg: var(--btn-svg) ) {
+    border: 1px solid $btn-border;
+    background-color: $btn-bg;
+    color: $btn-text;
+    display: flex;
+    align-items: center;
+    height: auto;
+    border-radius: 48px;
+    padding: 1rem 1.5rem;
+    text-decoration: none;
+    appearance: none;
+    line-height: 1.25;
+    width: fit-content;
+    text-align: left;
+    z-index: 1;
+    margin: 1rem 0 1.5rem 0;
+    gap: 12px;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: -0.25px;
+    user-select: none;
+    cursor: pointer;
+    @extend %transition;
+    @include button-hover;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &.inactive {
+        border: none;
+        background-color: var(--inactive-light-grey) !important;
+        pointer-events: none;
+
+        path, polygon {
+            fill: var(--text) !important;
+        }
+    }
+
+    svg {
+        width: 1rem;
+        max-width: 1rem;
+        height: auto;
+        max-height: 1rem;
+
+        path, polygon {
+            fill: $btn-svg;
+        }
+    }
+}
+
+// Extensions
+%button {
+    @include button;
+    @include button-hover;
+
+    &--solid {
+        @include button(var(--btn-bg), var(--btn-border), var(--btn-text), var(--btn-svg));
+        @include button-hover(var(--btn-bg), var(--btn-border), var(--btn-text), var(--btn-svg));
+    }
+
+    &--icon {
+        @extend %button;
+        $size: 48px;
+        height: $size;
+        width: $size;
+        min-width: $size;
+        aspect-ratio: 1;
+        border-radius: 100%;
+        position: relative;
+        flex: 0 auto !important;
+        padding: 0 !important;
+        @include mix.center;
+        @extend %transition;
+
+        @include bp.bp(tablet) {
+            $size: 56px;
+        }
+    }
+}

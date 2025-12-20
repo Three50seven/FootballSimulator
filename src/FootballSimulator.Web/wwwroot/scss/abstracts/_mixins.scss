@@ -1,0 +1,35 @@
+/* Spacing */
+$sm-spacing: max(1.5rem, min(4vw, 3rem));
+
+$spacing: max(2.25rem, min(5vw, 4rem));
+$lg-spacing: max(3rem, min(6vw, 64px));
+
+/* Padding */
+$padding: max(1.5rem, min(3vw, 2.5rem));
+
+@mixin paragraph {
+    font-size: max(1rem, min(5vw, 18px));
+    color: var(--text);
+    font-weight: 300;
+    line-height: 1.5;
+    margin: 1rem 0 1.5rem 0;
+
+    &:last-child {
+        margin-bottom: 0 !important;
+    }
+}
+// Positioning
+@mixin position ($position, $top, $right, $bottom, $left) {
+    position: $position;
+    top: $top;
+    right: $right;
+    bottom: $bottom;
+    left: $left;
+}
+
+// Flexbox
+@mixin center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
