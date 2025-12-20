@@ -25,6 +25,6 @@ namespace FootballSimulator.Core.Domain
         public DateTime BrokeGround { get; private set; }
         public DateTime? Opened { get; private set; }
         public bool Archive { get; set; }
-        public IEnumerable<Team> Teams { get; private set; } = [];
+        public IEnumerable<Team> Teams { get; private set; } = new List<Team>();
     }
 }

@@ -30,7 +30,7 @@ namespace FootballSimulator.Infrastructure.Data
 
             filter.Clean();
 
-            IQueryable<Stadium> query = EntitySet;
+            IQueryable<Stadium> query = GetEntitySet(StadiumQueryIncludeOption.All);
 
             if (filter.Name != null)
             {
