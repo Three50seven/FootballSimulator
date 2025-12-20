@@ -6,7 +6,7 @@ namespace FootballSimulator.Core.Domain
     {
         private WeatherType() { }
         public WeatherType(string name) : base(name) { }
-        public IEnumerable<ClimateType> ClimateTypes { get; set; } = [];
-        public IEnumerable<ClimateTypeWeatherType> ClimateTypeWeatherTypes { get; set; } = [];
+        public IEnumerable<ClimateType> ClimateTypes { get; set; } = new List<ClimateType>();
+        public IEnumerable<ClimateTypeWeatherType> ClimateTypeWeatherTypes { get; set; } = new List<ClimateTypeWeatherType>();
     }
 }
