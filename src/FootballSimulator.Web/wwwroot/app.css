@@ -58,6 +58,84 @@ h1:focus {
     color: var(--bs-secondary-color); /* dimmed text */
 }
 
+/* Themes */
+:root {
+    --text: #454b52;
+    --text-dark: #000;
+    --btn-active-bg: #1e4fff;
+    --btn-active-text: #ffffff;
+    --btn-bg: #fff;
+    --btn-border: #0047ff;
+    --btn-text: #0047ff;
+    --btn-svg: #0047ff;
+    --inactive-light-grey: #f6f9ff;
+    --white: #fff;
+    --dark: #000;
+    --text: #454b52;
+    --light-text: #9291a0;
+    --border: #cfcfd6;
+    --blue: #0079B1;
+    --green: #4fdb13;
+    --red: #cb2a2f;
+    --yellow: #ffb40d;
+    --purple: #9a1fa5;
+    --lime: #98d81c;
+    --cyan: #2be2ce;
+    --cobalt: #0c4090;
+    --light-grey: #f6f9ff;
+    --light-blue: #a9e3f8;
+    --light-green: #c1faae;
+    --light-red: #ffbdb9;
+    --light-yellow: #fae5b7;
+    --light-purple: #f4b6f8;
+    --shadow: rgba(0,0,0,0.1);
+    --light: rgba(255,255,255,0.2);
+    --gradient-bottom: linear-gradient(to bottom, #0079B1 0%, #0c4090 50%, #00C9FF 100%);
+    --gradient-right: linear-gradient(to right, #0079B1 0%, #0c4090 50%, #00C9FF 100%);
+    --gradient-left: linear-gradient(to left, #0079B1 0%, #0c4090 50%, #00C9FF 100%);
+}
+
+[data-theme="dark"] {
+    --text: #e5e7eb;
+    --text-dark: #f5f6f7;
+    --btn-active-bg: #8ab4ff;
+    --btn-active-text: #000000;
+    --btn-bg: #111;
+    --btn-border: #66aaff;
+    --btn-text: #ffffff;
+    --btn-svg: #ffffff;
+    --inactive-light-grey: #3a3f46;
+    --white: #e6e6e6;
+    --dark: #0a0a0a;
+
+    --text: #d4d7dd;
+    --light-text: #9ca3af;
+    --border: #3a3f47;
+
+    --blue: #4db8ff;
+    --green: #7ff36a;
+    --red: #ff6b6f;
+    --yellow: #ffd66b;
+    --purple: #d58aff;
+    --lime: #c8ff5c;
+    --cyan: #6ff7e8;
+    --cobalt: #4a6cff;
+
+    --light-grey: #1e1f22;
+    --light-blue: #1a3a4a;
+    --light-green: #1f3a1f;
+    --light-red: #3a1f1f;
+    --light-yellow: #3a321f;
+    --light-purple: #2f1f3a;
+
+    --shadow: rgba(0,0,0,0.6);
+    --light: rgba(255,255,255,0.08);
+
+    --gradient-bottom: linear-gradient(to bottom, #005a85 0%, #1a2a5a 50%, #0090cc 100%);
+    --gradient-right: linear-gradient(to right, #005a85 0%, #1a2a5a 50%, #0090cc 100%);
+    --gradient-left: linear-gradient(to left, #005a85 0%, #1a2a5a 50%, #0090cc 100%);
+}
+
 /* Override for light theme */
 @media (prefers-color-scheme: light) {
     .input-disabled {

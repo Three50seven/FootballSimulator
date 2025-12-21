@@ -1,12 +1,18 @@
 ﻿@using Common.Core.Domain
-<div class="pagination">
+<div class="d-flex align-items-center justify-content-between w-100">
 
-    <span>@TotalCount Results</span>
+    <!-- Result Count -->
+    <span class="text-muted small">
+        Showing @ItemsOnCurrentPage (@StartIndex–@EndIndex) of @TotalCount results
+    </span>
 
+    <!-- Page Select (mobile only) -->
     @if (TotalPages > 1)
     {
-        <div class="select">
-            <select @onchange="OnPageSelect">
+        <div class="d-flex d-lg-none">
+            <select class="form-select form-select-sm"
+                    @onchange="OnPageSelect"
+                    style="width:auto;">
                 @foreach (var p in AllPages)
                 {
                     <option value="@p" @attributes="GetSelected(p)">
@@ -17,65 +23,114 @@
         </div>
     }
 
-    <div class="button--group">
+    <!-- Bootstrap Pagination (desktop only) -->
+    <nav class="d-none d-lg-block" @ref="PaginationRef">
+        <ul class="pagination mb-0">
 
-        @if (CurrentPage > 1)
-        {
-            <button class="pagination--prev" @onclick="() => ChangePage(CurrentPage - 1)">
-                <span class="hidden">&lt</span>
-            </button>
-
-            @if (!MinPageVisible)
+            @* PREVIOUS *@
+            @if (CurrentPage > 1)
             {
-                <button @onclick="() => ChangePage(1)">1</button>
-                <button class="inactive">…</button>
-            }
-        }
+                <li class="page-item">
+                    <button class="page-link"
+                            @onclick="() => ChangePage(CurrentPage - 1)">
+                        &lt;
+                    </button>
+                </li>
 
-        @foreach (var p in VisiblePages)
-        {
-            <button class="@(p == CurrentPage ? "pagination--active" : "")"
-                    @onclick="() => ChangePage(p)">
-                @p
-            </button>
-        }
-
-        @if (CurrentPage < TotalPages)
-        {
-            @if (!MaxPageVisible)
-            {
-                <button class="inactive">…</button>
-                <button @onclick="() => ChangePage(TotalPages)">@TotalPages</button>
+                @if (!MinPageVisible)
+                {
+                    <li class="page-item">
+                        <button class="page-link" @onclick="() => ChangePage(1)">1</button>
+                    </li>
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                }
             }
 
-            <button class="pagination--next" @onclick="() => ChangePage(CurrentPage + 1)">
-                <span class="hidden">&gt</span>
-            </button>
-        }
-    </div>
+            @* VISIBLE PAGE RANGE *@
+            @foreach (var p in VisiblePages)
+            {
+                <li class="page-item @(p == CurrentPage ? "active" : "")">
+                    <button class="page-link"
+                            @onclick="() => ChangePage(p)">
+                        @p
+                    </button>
+                </li>
+            }
+
+            @* NEXT *@
+            @if (CurrentPage < TotalPages)
+            {
+                @if (!MaxPageVisible)
+                {
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                    <li class="page-item">
+                        <button class="page-link"
+                                @onclick="() => ChangePage(TotalPages)">
+                            @TotalPages
+                        </button>
+                    </li>
+                }
+
+                <li class="page-item">
+                    <button class="page-link"
+                            @onclick="() => ChangePage(CurrentPage + 1)">
+                        &gt;
+                    </button>
+                </li>
+            }
+
+        </ul>
+    </nav>
+
 </div>
 
+<script>
+    window.scrollToElement = (element) => {
+        if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    };
+</script>
+
 @code {
+    @inject IJSRuntime JS
+
     [Parameter] public int CurrentPage { get; set; }
     [Parameter] public int PageSize { get; set; }
     [Parameter] public int TotalCount { get; set; }
     [Parameter] public EventCallback<Page> OnPageChanged { get; set; }
 
     public Page CurrentPaging { get; set; } = new();
-    
+
+    private ElementReference PaginationRef;
+    private int StartIndex => ((CurrentPage - 1) * PageSize) + 1;
+    private int EndIndex => Math.Min(CurrentPage * PageSize, TotalCount);
+    private int ItemsOnCurrentPage
+    {
+        get
+        {
+            // If it's not the last page, it's always full
+            if (CurrentPage < TotalPages)
+                return PageSize;
+
+            // Last page: return the remainder
+            int remainder = TotalCount % PageSize;
+            return remainder == 0 ? PageSize : remainder;
+        }
+    }
     private Dictionary<string, object>? GetSelected(int p)
         => p == CurrentPage
             ? new() { { "selected", true } }
             : null;
-
     private int TotalPages => (int)Math.Ceiling((double)TotalCount / PageSize);
-
     private IEnumerable<int> AllPages => Enumerable.Range(1, TotalPages);
-
     private IEnumerable<int> VisiblePages =>
         AllPages.Skip(Math.Max(0, CurrentPage - 3))
                 .Take(5);
-
     private bool MinPageVisible => VisiblePages.Contains(1);
     private bool MaxPageVisible => VisiblePages.Contains(TotalPages);
 
@@ -85,7 +140,10 @@
             return;
 
         CurrentPaging.Number = page;
+
         await OnPageChanged.InvokeAsync(CurrentPaging);
+        // Scroll pagination back into view
+        await (_ = JS.InvokeVoidAsync("scrollToElement", PaginationRef));
     }
 
     private async Task OnPageSelect(ChangeEventArgs e)
