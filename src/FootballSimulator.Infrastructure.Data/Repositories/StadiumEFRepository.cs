@@ -20,8 +20,7 @@ namespace FootballSimulator.Infrastructure.Data
         {
             var query = base.BuildQueryable(db, includes);
 
-            if (includes == StadiumQueryIncludeOption.All)
-                query = query.IncludeAll();
+            query = query.Include(includes);
 
             return query;
         }
@@ -35,7 +34,7 @@ namespace FootballSimulator.Infrastructure.Data
 
             using var db = await Factory.CreateDbContextAsync();
 
-            IQueryable<Stadium> query = base.BuildQueryable(db, StadiumQueryIncludeOption.All);
+            IQueryable<Stadium> query = BuildQueryable(db, StadiumQueryIncludeOption.All);
 
             if (filter.Name != null)
             {
@@ -69,7 +68,8 @@ namespace FootballSimulator.Infrastructure.Data
 
             var orderedQuery = resultFilter.Sorting.SortBy switch
             {
-                "Type" => query.OrderBy(p => p.StadiumType, resultFilter.Sorting.Direction),
+                "Type" => query.OrderBy(p => p.StadiumType.Name, resultFilter.Sorting.Direction),
+                "City" => query.OrderBy(p => p.City.Name, resultFilter.Sorting.Direction),
                 "LastUpdated" => query.OrderBy(p => p.ChangeEvents.Updated.Date, resultFilter.Sorting.Direction),
                 _ => query.OrderBy(resultFilter.Sorting)
             };           
