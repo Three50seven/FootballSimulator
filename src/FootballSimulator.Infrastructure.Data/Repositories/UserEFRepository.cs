@@ -7,34 +7,49 @@ namespace FootballSimulator.Infrastructure.Data
 {
     public class UserEFRepository : FootballSimulatorEntityRepositoryBase<User>, IUserRepository
     {
-        public UserEFRepository(FootballSimulatorDbContext context, IEntityHistoryStore store)
-            : base(context, store)
+        public UserEFRepository(IDbContextFactory<FootballSimulatorDbContext> factory, IEntityHistoryStore store)
+            : base(factory, store)
         {
         }
 
-        protected override IQueryable<User> FullEntitySet => base.FullEntitySet
-                                                            .Include(u => u.UserRoles)
-                                                                .ThenInclude(ur => ur.Role)
-                                                            .Where(u => u.Id != User.SystemUserId); //exclude system user from all user queries - note, this also prevents anyone from logging in as the system user
+        protected override IQueryable<User> BuildFullEntitySet(FootballSimulatorDbContext db)
+        {
+            var query = base.BuildFullEntitySet(db);
+
+            // Always exclude the system user:
+            query = query.Where(u => u.Id != User.SystemUserId);
+
+            // Include roles by default:
+            query = query.Include(u => u.UserRoles)
+                                .ThenInclude(ur => ur.Role);
+
+            return query;
+        }
 
         public bool CheckForExistingEmail(string? email, int? id)
         {
-            return FullEntitySet.Where(u => u.Id != id).Any(u => string.Equals(u.Email, email));
+            using var db = Factory.CreateDbContext();
+            return BuildFullEntitySet(db).Where(u => u.Id != id).Any(u => string.Equals(u.Email, email));
         }
 
         public bool CheckForExistingUserName(string? userName, int? id)
         {
-            return FullEntitySet.Where(u => u.Id != id).Any(u => string.Equals(u.UserName, userName));
+            using var db = Factory.CreateDbContext();
+            return BuildFullEntitySet(db).Where(u => u.Id != id).Any(u => string.Equals(u.UserName, userName));
         }
 
         public async Task<User?> GetByApplicationIdentityAsync(string userNameOrApplicationUserId, CancellationToken cancellationToken = default, bool includeArchived = false)
         {
+            using var db = await Factory.CreateDbContextAsync(cancellationToken);
             if (includeArchived)
-                return await DbSet.Include(u => u.UserRoles)
-                            .ThenInclude(ur => ur.Role)
-                            .FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserId, userNameOrApplicationUserId));
+            {
+                return base.BuildFullEntitySet(db)
+                    .Include(u => u.UserRoles)
+                        .ThenInclude(ur => ur.Role)
+                    .FirstOrDefault(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserId, userNameOrApplicationUserId));
+            }
             else
-                return await FullEntitySet.FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserId, userNameOrApplicationUserId));
+                return await BuildFullEntitySet(db).FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserId, userNameOrApplicationUserId));
         }
     }
 }

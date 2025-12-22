@@ -11,16 +11,19 @@ namespace FootballSimulator.Infrastructure.Data
 {
     public class StadiumEFRepository : FootballSimulatorEntityRepositoryBase<Stadium, StadiumQueryIncludeOption>, IStadiumRepository
     {
-        public StadiumEFRepository(FootballSimulatorDbContext dbContext, IEntityHistoryStore historyStore) 
-            : base(dbContext, historyStore)
+        public StadiumEFRepository(IDbContextFactory<FootballSimulatorDbContext> factory, IEntityHistoryStore historyStore) 
+            : base(factory, historyStore)
         {
         }
-        
-        protected override IQueryable<Stadium> FullEntitySet => base.FullEntitySet.IncludeAll();
-        
-        protected override IQueryable<Stadium> GetEntitySet(StadiumQueryIncludeOption includes)
+
+        protected override IQueryable<Stadium> BuildQueryable(FootballSimulatorDbContext db, StadiumQueryIncludeOption includes)
         {
-            return EntitySet.Include(includes);
+            var query = base.BuildQueryable(db, includes);
+
+            if (includes == StadiumQueryIncludeOption.All)
+                query = query.IncludeAll();
+
+            return query;
         }
         
         public async Task<IPagedEnumerable<Stadium>> SearchAsync(StadiumSearchFilter filter, ResultListFilter resultFilter)
@@ -30,7 +33,9 @@ namespace FootballSimulator.Infrastructure.Data
 
             filter.Clean();
 
-            IQueryable<Stadium> query = GetEntitySet(StadiumQueryIncludeOption.All);
+            using var db = await Factory.CreateDbContextAsync();
+
+            IQueryable<Stadium> query = base.BuildQueryable(db, StadiumQueryIncludeOption.All);
 
             if (filter.Name != null)
             {
@@ -69,7 +74,7 @@ namespace FootballSimulator.Infrastructure.Data
                 _ => query.OrderBy(resultFilter.Sorting)
             };           
 
-            var stadiums = await orderedQuery.Page(resultFilter.Paging, out int totalCount).ToListAsync();
+            var stadiums = await orderedQuery.Page(resultFilter.Paging, out int totalCount).ToListAsync();            
 
             return new PagedList<Stadium>(stadiums, totalCount);
         }        
