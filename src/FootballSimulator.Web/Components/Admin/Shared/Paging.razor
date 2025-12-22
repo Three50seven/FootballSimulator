@@ -2,9 +2,18 @@
 <div class="d-flex align-items-center justify-content-between w-100">
 
     <!-- Result Count -->
-    <span class="text-muted small">
-        Showing @ItemsOnCurrentPage (@StartIndex–@EndIndex) of @TotalCount results
-    </span>
+    @if (TotalCount > 0)
+    {
+        <span class="text-muted small">        
+                Showing @ItemsOnCurrentPage (@StartIndex–@EndIndex) of @TotalCount results
+        </span>
+    }
+    else
+    {
+        <span class="text-muted small">
+            No results found.
+        </span>
+    }
 
     <!-- Page Select (mobile only) -->
     @if (TotalPages > 1)
