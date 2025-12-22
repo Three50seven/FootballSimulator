@@ -56,10 +56,10 @@ else
             <table class="table table-striped table-hover align-middle">
                 <thead class="table d-md-table-header-group">
                     <tr>
-                        <th>Name</th>
-                        <th>Type</th>
-                        <th>Capacity</th>
-                        <th>City</th>
+                        <SortingColumn Text="Name" Column="Name" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
+                        <SortingColumn Text="Type" Column="Type" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
+                        <SortingColumn Text="Capacity" Column="Capacity" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
+                        <SortingColumn Text="City" Column="City" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
                         <th class="text-end">Manage</th>
                     </tr>
                 </thead>
@@ -185,14 +185,13 @@ else
 
     private void HandleInvalidEntity()
     {
-        Console.WriteLine("Validation failed. Stadium not saved.");
+        Console.WriteLine("Validation failed. Stadium not saved.");        
     }
 
     private async Task SearchStadiums()
     {
         if (ManageModel is null || SearchQueryModel is null) return;
 
-        Console.WriteLine($"[=========] - {DateTime.Now:hh:mm:ss:fff} Searching stadiums with current filters...");
         SearchQueryModel.Filter = ManageModel.Filter;
 
         if (SearchQueryModel.ResultFilter is null)
@@ -223,6 +222,14 @@ else
 
         SearchQueryModel.ResultFilter.CurrentPage = page.Number;
         SearchQueryModel.ResultFilter.PageSize = page.Size;
+        await SearchStadiums();
+    }
+
+    private async Task HandleSorting((string SortBy, string Direction) sortParams)
+    {
+        if (SearchQueryModel is null || SearchQueryModel.ResultFilter is null) return;
+        SearchQueryModel.ResultFilter.SortProperty = sortParams.SortBy;
+        SearchQueryModel.ResultFilter.SortDirection = sortParams.Direction;
         await SearchStadiums();
     }
 }

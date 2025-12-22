@@ -64,6 +64,7 @@ namespace FootballSimulator.Infrastructure.Data
 
             var orderedQuery = resultFilter.Sorting.SortBy switch
             {
+                "Type" => query.OrderBy(p => p.StadiumType, resultFilter.Sorting.Direction),
                 "LastUpdated" => query.OrderBy(p => p.ChangeEvents.Updated.Date, resultFilter.Sorting.Direction),
                 _ => query.OrderBy(resultFilter.Sorting)
             };           

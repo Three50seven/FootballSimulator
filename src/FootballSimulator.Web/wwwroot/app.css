@@ -58,6 +58,12 @@ h1:focus {
     color: var(--bs-secondary-color); /* dimmed text */
 }
 
+.sort-indicator {
+    margin-right: 0.25rem;
+    font-size: 0.75em;
+    opacity: 0.7;
+}
+
 /* Themes */
 :root {
     --text: #454b52;
