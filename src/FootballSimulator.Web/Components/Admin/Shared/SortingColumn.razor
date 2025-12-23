@@ -1,6 +1,9 @@
 ﻿<th class="sortable @SortCss"
     @onclick="OnClick">
-    <span class="sort-indicator">@SortSymbol</span>
+    @if (IsCurrentSort)
+    {
+        <span class="sort-indicator">@SortSymbol</span>
+    }
     @Text
 </th>
 
@@ -15,7 +18,7 @@
 
     private string SortCss => IsCurrentSort ? (Direction == "asc" ? "ascending" : "descending") : "";
 
-    private string SortSymbol => Direction == "asc" ? "▲" : "▼";
+    private string SortSymbol => !IsCurrentSort ? "" : Direction == "asc" ? "▲" : "▼";
 
     private async Task OnClick()
     {
