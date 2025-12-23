@@ -1,10 +1,20 @@
 ﻿<th class="sortable @SortCss"
     @onclick="OnClick">
-    @if (IsCurrentSort)
-    {
-        <span class="sort-indicator">@SortSymbol</span>
-    }
-    @Text
+    <div class="sort-wrapper">
+        <span class="sort-indicator">
+            @if (IsCurrentSort)
+            {
+                <span class="arrow up @(Direction == "asc" ? "active" : "")">▲</span>
+                <span class="arrow down @(Direction == "desc" ? "active" : "")">▼</span>
+            }
+            else
+            {
+                <span class="arrow up disabled">▲</span>
+                <span class="arrow down disabled">▼</span>
+            }
+        </span>
+        <span class="header-text">@Text</span>
+    </div>
 </th>
 
 @code {
