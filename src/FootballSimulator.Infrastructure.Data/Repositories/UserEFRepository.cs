@@ -1,5 +1,8 @@
 ﻿using Common.Core;
+using Common.Core.Domain;
+using Common.Core.Validation;
 using FootballSimulator.Core.Domain;
+using FootballSimulator.Core.DTOs;
 using FootballSimulator.Core.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,6 +53,44 @@ namespace FootballSimulator.Infrastructure.Data
             }
             else
                 return await BuildFullEntitySet(db).FirstOrDefaultAsync(u => string.Equals(u.UserName, userNameOrApplicationUserId) || string.Equals(u.ApplicationUserId, userNameOrApplicationUserId));
+        }
+
+        public async Task<IPagedEnumerable<User>> SearchAsync(UserSearchFilter filter, ResultListFilter resultFilter)
+        {
+            Guard.IsNotNull(filter, nameof(filter));
+            Guard.IsNotNull(resultFilter, nameof(resultFilter));
+
+            filter.Clean();
+
+            using var db = await Factory.CreateDbContextAsync();
+            IQueryable<User> query = BuildFullEntitySet(db);
+            if (filter.FirstName != null)
+            {
+                query = query.Where(u => u.Name.FirstName.ToLower().Contains(filter.FirstName));
+            }
+            if (filter.LastName != null)
+            {
+                query = query.Where(u => u.Name.LastName.ToLower().Contains(filter.LastName));
+            }
+            if (filter.UserName != null)
+            {
+                query = query.Where(u => u.UserName != null && u.UserName.ToLower().Contains(filter.UserName));
+            }
+            if (filter.Email != null)
+            {
+                query = query.Where(u => u.Email != null && u.Email.ToLower().Contains(filter.Email));
+            }
+
+            var orderedQuery = resultFilter.Sorting.SortBy switch
+            {
+                "Name" => query.OrderBy(u => u.Name.FirstName, resultFilter.Sorting.Direction)
+                    .ThenBy(u => u.Name.LastName, resultFilter.Sorting.Direction),
+                _ => query.OrderBy(resultFilter.Sorting)
+            };
+
+            var results = await orderedQuery.Page(resultFilter.Paging, out int totalCount).ToListAsync();
+
+            return new PagedList<User>(results, totalCount);
         }
     }
 }

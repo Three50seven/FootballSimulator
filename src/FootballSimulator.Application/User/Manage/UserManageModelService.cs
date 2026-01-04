@@ -1,4 +1,5 @@
 ﻿
+using FootballSimulator.Application.Models;
 using FootballSimulator.Core.DTOs;
 using FootballSimulator.Core.Interfaces;
 
@@ -15,22 +16,30 @@ namespace FootballSimulator.Application.Services
 
         public async Task<UserManageModel> BuildModelAsync()
         {
-            var model = new UserManageModel();
-
-            var users = await _userRepository.GetAllAsync();
-            model.Results = [.. users.Select(u => new UserSearchListItem
-            {
-                Id = u.Id,
-                Guid = u.Guid,
-                FirstName = u.Name.FirstName,
-                LastName = u.Name.LastName,
-                UserName = u.UserName,
-                Email = u.Email
-            })];
-
             await Task.CompletedTask;
+            return new UserManageModel();
+        }
 
-            return model;
+        public async Task<UserSearchResultModel> SearchAsync(SearchQueryModel<UserSearchFilter> model)
+        {
+            model.Filter ??= new UserSearchFilter();
+            model.ResultFilter ??= new ResultListFilterModel();
+            var resultFilter = model.ResultFilter.FilterValue;
+            var results = await _userRepository.SearchAsync(model.Filter, resultFilter);
+            return new UserSearchResultModel
+            {
+                Results = [.. results.Select(u => new UserSearchListItem
+                {
+                    Id = u.Id,
+                    Guid = u.Guid,
+                    FirstName = u.Name.FirstName,
+                    LastName = u.Name.LastName,
+                    UserName = u.UserName,
+                    Email = u.Email
+                })],
+                Sorting = resultFilter.Sorting,
+                Paging = new PagingNavigationModel(resultFilter.Paging, results.TotalCount)
+            };
         }
     }
 }
