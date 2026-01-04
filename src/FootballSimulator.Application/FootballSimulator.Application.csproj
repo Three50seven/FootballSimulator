@@ -10,8 +10,4 @@
     <ProjectReference Include="..\FootballSimulator.Core\FootballSimulator.Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Team\Edit\" />
-  </ItemGroup>
-
 </Project>
