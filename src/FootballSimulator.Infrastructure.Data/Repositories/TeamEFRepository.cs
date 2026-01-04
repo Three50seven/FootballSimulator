@@ -42,8 +42,9 @@ namespace FootballSimulator.Infrastructure.Data
                 "Name" => query.OrderBy(t => t.Name, resultFilter.Sorting.Direction)
                     .ThenBy(t => t.Mascot, resultFilter.Sorting.Direction),
                 "City" => query.OrderBy(t => t.Stadium!.City!.Name, resultFilter.Sorting.Direction),
+                "Stadium" => query.OrderBy(t => t.Stadium!.Name, resultFilter.Sorting.Direction),
                 "Division" => query.OrderBy(t => t.Division!.Name, resultFilter.Sorting.Direction),
-                "Conference" => query.OrderBy(t => t.Division!.Conference!.Name, resultFilter.Sorting.Direction),
+                "Conference" => query.OrderBy(t => t.Division!.Conference!.Abbreviation, resultFilter.Sorting.Direction),
                 _ => query.OrderBy(resultFilter.Sorting)
             };
 

@@ -16,6 +16,9 @@ namespace FootballSimulator.Infrastructure.Data
                     .ThenInclude(s => s.City)
                     .ThenInclude(c => c.State)
                     .ThenInclude(st => st.Country)
+                .Include(t => t.Division)
+                .Include(t => t.Division)
+                    .ThenInclude(d => d.Conference)
                 .IncludeChangeEvents()
                 .AsSplitQuery();
         }
@@ -34,6 +37,11 @@ namespace FootballSimulator.Infrastructure.Data
                         .ThenInclude(s => s.City)
                         .ThenInclude(c => c.State)
                         .ThenInclude(st => st.Country)
+                    .IncludeChangeEvents(),
+                TeamQueryIncludeOption.Division => query
+                    .Include(t => t.Division)
+                    .Include(t => t.Division)
+                        .ThenInclude(d => d.Conference)
                     .IncludeChangeEvents(),
                 _ => query
             };

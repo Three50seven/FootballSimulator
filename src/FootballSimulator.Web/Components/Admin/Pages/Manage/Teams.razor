@@ -1,7 +1,221 @@
 ﻿@page "/admin/manage/teams"
-
+@using Common.Core.Domain
+@using FootballSimulator.Core.DTOs
+@using FootballSimulator.Core.Interfaces
+@using Microsoft.AspNetCore.Components.Forms
+@rendermode InteractiveServer
 
 <PageTitle>Manage Teams</PageTitle>
 
-<h3>Manage teams</h3>
-<p>Team Editor coming soon!</p>
+<h3>Manage Teams</h3>
+@if (ManageModel is null)
+{
+    <p><em>Loading teams...</em></p>
+}
+else
+{
+    @if (!ShowForm)
+    {
+        <div class="card mb-3">
+            <div class="card-body">
+                <form @onsubmit="Search">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <input class="form-control" placeholder="Name"
+                                   @bind="ManageModel.Filter.Name" />
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary me-2">Search</button>
+                        <button type="button" class="btn btn-secondary" @onclick="ResetFilters">Reset</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end p-3">
+            <button class="btn btn-primary" @onclick="ShowAddForm">+ Add New</button>
+        </div>
+        <div class="table-responsive mb-5">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table d-md-table-header-group">
+                    <tr>
+                        <SortingColumn Text="Name" Column="Name" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
+                        <SortingColumn Text="City" Column="City" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
+                        <SortingColumn Text="Stadium" Column="Stadium" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
+                        <SortingColumn Text="Division" Column="Division" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
+                        <SortingColumn Text="Conference" Column="Conference" SortBy="@ManageModel.Sorting.SortBy" Direction="@ManageModel.Sorting.DirectionAbbr" OnSort="HandleSorting" />
+                        <th class="text-end">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in ManageModel.Results)
+                    {
+                        <tr class="d-block d-md-table-row mb-3 mb-md-0">
+                            <td data-label="Name"><strong>@item.DisplayName</strong></td>
+                            <td data-label="City">@item.CityName</td>
+                            <td data-label="Stadium">@item.StadiumName</td>
+                            <td data-label="Division">@item.DivisionName</td>
+                            <td data-label="Conference">@item.ConferenceName</td>
+                            <td data-label="Manage" class="text-end">
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-secondary me-1" @onclick="() => ShowEditForm(item.Guid)">
+                                        Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" @onclick="() => ShowConfirmModal(item.Guid)">
+                                        Delete
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <Paging CurrentPage="@ManageModel.Paging.Paging.Current"
+                    PageSize="@ManageModel.Paging.Paging.Size"
+                    TotalCount="@ManageModel.Paging.TotalCount"
+                    OnPageChanged="Paginate" />
+
+        </div>
+        <ConfirmActionModal @ref="DeleteModal"
+                            Title="Delete Team"
+                            Message="Are you sure you want to delete this team?"
+                            ActionName="Delete"
+                            OnConfirm="DeleteTeam" />
+
+    }
+    else
+    {
+        <h4>@FormModeLabel</h4>
+        <EditForm Model="@EditModel" OnValidSubmit="SaveTeam" OnInvalidSubmit="HandleInvalidEntity">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="mb-3">
+                <label>Team Name</label>
+                <InputText @bind-Value="EditModel.Name" class="form-control" />
+                <ValidationMessage For="@(() => EditModel.Name)" />
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-success">@FormModeLabel</button>
+                <button class="btn btn-secondary" @onclick="CancelForm">Cancel</button>
+            </div>
+        </EditForm>
+    }
+}
+
+@code {
+    [Inject] private ITeamManageModelService _teamManageService { get; set; } = default!;
+    [Inject] private ITeamEditService _teamEditService { get; set; } = default!;
+    private bool ShowForm = false;
+    private TeamManageModel? ManageModel = new TeamManageModel();
+    private TeamEditModel EditModel = new TeamEditModel();
+    private string FormModeLabel => $"{EditModel.CreateOrEdit} Team";
+    private ConfirmActionModal? DeleteModal;
+    private Guid TeamGuidToDelete;
+    private SearchQueryModel<TeamSearchFilter>? SearchQueryModel = new SearchQueryModel<TeamSearchFilter>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ManageModel = new TeamManageModel();
+        ManageModel.Filter?.Clean();
+        await Search();
+    }
+
+    private async Task ShowConfirmModal(Guid teamGuid)
+    {
+        TeamGuidToDelete = teamGuid;
+        if (DeleteModal is not null)
+        {
+            await DeleteModal.ShowAsync(teamGuid);
+        }
+    }
+
+    private void ShowAddForm()
+    {
+        EditModel = new TeamEditModel();
+        ShowForm = true;
+    }
+
+
+    private async Task ShowEditForm(Guid teamGuid)
+    {
+        var teamEditModel = await _teamEditService.BuildModel(teamGuid);
+
+        if (teamEditModel is null)
+        {
+            return;
+        }
+        EditModel = teamEditModel;
+        ShowForm = true;
+    }
+
+    private async Task DeleteTeam()
+    {
+        await _teamEditService.DeleteAsync(TeamGuidToDelete);
+        ManageModel = new TeamManageModel();
+    }
+
+    private void CancelForm()
+    {
+        ShowForm = false;
+    }
+
+    private async Task SaveTeam()
+    {
+        await _teamEditService.SaveAsync(EditModel);
+        ManageModel = new TeamManageModel();
+        ShowForm = false;
+    }
+
+    private void HandleInvalidEntity()
+    {
+        Console.WriteLine("Validation failed. Team not saved.");
+    }
+
+    private async Task Search()
+    {
+        if (ManageModel is null || SearchQueryModel is null) return;
+
+        SearchQueryModel.Filter = ManageModel.Filter;
+
+        if (SearchQueryModel.ResultFilter is null)
+        {
+            SearchQueryModel.ResultFilter = new ResultListFilterModel()
+            {
+                CurrentPage = ManageModel.Paging.Paging.Current,
+                PageSize = ManageModel.Paging.Paging.Size,
+                SortProperty = ManageModel.Sorting.SortBy,
+                SortDirection = ManageModel.Sorting.DirectionAbbr
+            };
+        }
+
+        var results = await _teamManageService.SearchAsync(SearchQueryModel);
+        ManageModel.Results = results.Results;
+        ManageModel.Sorting = results?.Sorting ?? new SortCriteria(ManageModel.Sorting.DirectionAbbr);
+        ManageModel.Paging = results?.Paging ?? new PagingNavigationModel();
+    }
+
+    private async Task ResetFilters()
+    {
+        await OnInitializedAsync();
+    }
+
+    private async Task Paginate(Page page)
+    {
+        if (SearchQueryModel is null || SearchQueryModel.ResultFilter is null) return;
+
+        SearchQueryModel.ResultFilter.CurrentPage = page.Number;
+        SearchQueryModel.ResultFilter.PageSize = page.Size;
+        await Search();
+    }
+
+    private async Task HandleSorting((string SortBy, string Direction) sortParams)
+    {
+        if (SearchQueryModel is null || SearchQueryModel.ResultFilter is null) return;
+        SearchQueryModel.ResultFilter.SortProperty = sortParams.SortBy;
+        SearchQueryModel.ResultFilter.SortDirection = sortParams.Direction;
+        await Search();
+    }
+}

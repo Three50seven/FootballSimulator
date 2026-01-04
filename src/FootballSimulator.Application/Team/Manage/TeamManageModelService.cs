@@ -32,7 +32,7 @@ namespace FootballSimulator.Application.Services
                     Name = t.Name,
                     FoundedYear = t.FoundedYear,
                     CityName = t.Stadium!.City!.Name,
-                    ConferenceName = t.Division!.Conference!.Name,
+                    ConferenceName = t.Division!.Conference!.Abbreviation,
                     DivisionName = t.Division.Name,
                     DisplayName = t.ToString(),
                     StadiumName = t.Stadium.Name
