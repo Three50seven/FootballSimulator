@@ -28,4 +28,11 @@ namespace FootballSimulator.Core
         Team = 2,
         Geography = 3
     }
+    public enum TeamQueryIncludeOption
+    {
+        All = 0,
+        None = 1,
+        Stadium = 2,
+        Division = 3
+    }
 }
