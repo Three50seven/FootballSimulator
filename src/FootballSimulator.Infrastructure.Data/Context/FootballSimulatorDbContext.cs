@@ -41,5 +41,19 @@ namespace FootballSimulator.Infrastructure.Data
         public virtual DbSet<Conference>? Conferences { get; set; }
         public virtual DbSet<Division>? Divisions { get; set; }
         public virtual DbSet<Team>? Teams { get; set; }
+        public virtual DbSet<TeamRating>? TeamRatings { get; set; }
+        public virtual DbSet<DivisionRotationSchedule>? DivisionRotationSchedules { get; set; }
+        public virtual DbSet<Game>? Games { get; set; }
+        public virtual DbSet<GameType>? GameTypes { get; set; }
+        public virtual DbSet<RankingScopeType>? RankingScopeTypes { get; set; }        
+        public virtual DbSet<Season>? Seasons { get; set; }
+        public virtual DbSet<SeasonByeWeek>? SeasonByeWeeks { get; set; }
+        public virtual DbSet<SeasonSchedule>? SeasonSchedules { get; set; }
+        public virtual DbSet<SeasonType>? SeasonTypes { get; set; }
+        public virtual DbSet<SeasonWeek>? SeasonWeeks { get; set; }
+        public virtual DbSet<TeamSeasonStatistic>? TeamSeasonStatistics { get; set; }
+        public virtual DbSet<TeamPostSeasonStatistic>? TeamPostSeasonStatistics { get; set; }
+        public virtual DbSet<QualificationType>? QualificationTypes { get; set; }
+        public virtual DbSet<StatisticGenerationMethodType>? StatisticGenerationMethodTypes { get; set; }
     }
 }

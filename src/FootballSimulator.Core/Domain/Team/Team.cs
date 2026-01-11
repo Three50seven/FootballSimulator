@@ -26,5 +26,9 @@ namespace FootballSimulator.Core.Domain
 
         public bool Archive { get; set; }
         public override string ToString() => Mascot != null ? $"{Name} {Mascot}" : Name;
+        public IEnumerable<SeasonByeWeek> SeasonByeWeeks { get; set; } = [];
+        public IEnumerable<TeamRating> TeamRatings { get; set; } = [];
+        public IEnumerable<TeamSeasonStatistic> TeamSeasonStatistics { get; set; } = [];
+        public IEnumerable<TeamPostSeasonStatistic> TeamPostSeasonStatistics { get; set; } = [];
     }
 }
